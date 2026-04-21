@@ -40,21 +40,58 @@ export default function Dashboard() {
                 <Label htmlFor="name">Jenis Tanaman</Label>
                 <select id="name" name="name" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" required>
                   <option value="">Pilih Tanaman...</option>
-                  <optgroup label="Hortikultura (Sayur & Semusim & Buah Singkat)">
+                  
+                  <optgroup label="🍅 Sayuran Buah (Hortikultura)">
                     <option value="Cabai">Cabai</option>
                     <option value="Tomat">Tomat</option>
+                    <option value="Terong">Terong</option>
                     <option value="Melon / Semangka">Melon / Semangka</option>
-                    <option value="Bawang Merah">Bawang Merah</option>
+                    <option value="Mentimun">Mentimun</option>
+                    <option value="Pare">Pare</option>
                     <option value="Pepaya">Pepaya</option>
                   </optgroup>
-                  <optgroup label="Tumbuhan Keras / Buah (Perkebunan)">
+
+                  <optgroup label="🥬 Sayuran Daun (Fase Singkat)">
+                    <option value="Sawi / Pakcoy">Sawi / Pakcoy</option>
+                    <option value="Selada / Lettuce">Selada / Lettuce</option>
+                    <option value="Bayam">Bayam</option>
+                    <option value="Kangkung">Kangkung</option>
+                    <option value="Kubis / Kol">Kubis / Kol</option>
+                  </optgroup>
+
+                  <optgroup label="🧄 Umbi & Rimpang">
+                    <option value="Bawang Merah">Bawang Merah</option>
+                    <option value="Bawang Putih">Bawang Putih</option>
+                    <option value="Kentang">Kentang</option>
+                    <option value="Wortel">Wortel</option>
+                    <option value="Singkong">Singkong</option>
+                    <option value="Ubi Jalar">Ubi Jalar</option>
+                  </optgroup>
+
+                  <optgroup label="🥜 Kacang-kacangan (Legum)">
+                    <option value="Kacang Panjang">Kacang Panjang</option>
+                    <option value="Buncis">Buncis</option>
+                    <option value="Kedelai">Kedelai</option>
+                    <option value="Kacang Tanah">Kacang Tanah</option>
+                    <option value="Edamame">Edamame</option>
+                  </optgroup>
+
+                  <optgroup label="🌳 Pohon Buah Keras / Perkebunan">
                     <option value="Durian">Durian</option>
                     <option value="Alpukat">Alpukat</option>
                     <option value="Jeruk">Jeruk</option>
+                    <option value="Mangga">Mangga</option>
+                    <option value="Kelengkeng">Kelengkeng</option>
+                    <option value="Rambutan">Rambutan</option>
+                    <option value="Jambu Biji">Jambu Biji</option>
                   </optgroup>
-                  <optgroup label="Tanaman Pangan">
+
+                  <optgroup label="🌴 Tanaman Industri & Pangan">
                     <option value="Padi">Padi</option>
                     <option value="Jagung">Jagung</option>
+                    <option value="Kelapa Sawit">Kelapa Sawit</option>
+                    <option value="Kopi">Kopi</option>
+                    <option value="Kakao">Kakao</option>
                   </optgroup>
                 </select>
               </div>

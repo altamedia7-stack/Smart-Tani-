@@ -102,11 +102,15 @@ export function getNPKRatio(fertilizers: string[]): { n: number; p: number; k: n
   return { n, p, k, target };
 }
 
-export function getPlantCategory(name: string): 'Hortikultura' | 'Pohon Buah' | 'Pangan' | 'Pepaya' {
-  if (['Durian', 'Alpukat', 'Jeruk'].includes(name)) return 'Pohon Buah';
+export function getPlantCategory(name: string): string {
+  if (['Durian', 'Alpukat', 'Jeruk', 'Mangga', 'Kelengkeng', 'Rambutan', 'Jambu Biji'].includes(name)) return 'Pohon Buah';
+  if (['Kelapa Sawit', 'Kopi', 'Kakao'].includes(name)) return 'Tanaman Industri';
   if (['Padi', 'Jagung'].includes(name)) return 'Pangan';
   if (name === 'Pepaya') return 'Pepaya';
-  return 'Hortikultura';
+  if (['Sawi / Pakcoy', 'Bayam', 'Kangkung', 'Selada / Lettuce', 'Kubis / Kol'].includes(name)) return 'Sayuran Daun';
+  if (['Bawang Merah', 'Bawang Putih', 'Kentang', 'Wortel', 'Singkong', 'Ubi Jalar'].includes(name)) return 'Umbi';
+  if (['Kacang Panjang', 'Buncis', 'Kedelai', 'Kacang Tanah', 'Edamame'].includes(name)) return 'Legum';
+  return 'Hortikultura'; // Cabai, Tomat, Terong, dst.
 }
 
 export function getDominantNutrient(week: number, plantName: string = 'Cabai'): { title: string, explanation: string, comparison: string } {
@@ -171,7 +175,64 @@ export function getDominantNutrient(week: number, plantName: string = 'Cabai'): 
     };
   }
 
-  // Hortikultura
+  if (cat === 'Sayuran Daun') {
+    if (week <= 2) return {
+      title: "Fase Pembentukan Akar & Helaian Daun",
+      explanation: "Nitrogen sangat mendominasi (NPK + Urea parsial) untuk merangsang pembelahan sel daun sejati secara instan.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Jangan hanya fokus ke Nitrogen! Jika sedari dini tidak disuplai Kalsium (Ca), pelepah daun muda akan melengkung, cacat, dan ujungnya mudah gosong (Tipburn) akibat gagalnya transpirasi nutrisi."
+    };
+    return {
+      title: "Fase Pengisian Bobot & Pemanenan",
+      explanation: "Kalsium Nitrat & Kalium ringan mulai disemprotkan agar daun tebal, keras (cripsy), dan bobot per karungnya berat.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Sayuran daun yang terlalu banyak Amonium (dari ZA/Urea) tanpa Kalsium pelepahnya akan rapuh, ngelentruk (layu) saat dipacking, dan daya simpannya hancur total berair busuk."
+    };
+  }
+
+  if (cat === 'Umbi') {
+    if (week <= 3) return {
+      title: "Fase Tunas & Vegetatif Serentak",
+      explanation: "N-P-K Seimbang + Sulfur sangat krusial. Sulfur membentuk enzim pembentuk aroma khas (bawang) dan menahan serangan jamur.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Fase krusial untuk bawang-bawangan. Pastikan bedengan tidak macak-macak (menggenang) agar basah tidak mengundang penyakit otomatis Mboler/Layu Fusarium."
+    };
+    if (week <= 6) return {
+      title: "Fase Inisiasi Umbi (Stop Nitrogen)",
+      explanation: "Stop penggunaan pupuk yang dominan Nitrogen (Urea/ZA). Genjot Fosfat (MKP) tinggi agar energi dialihkan ke bawah (akar) bukan ke daun.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Kesalahan massal petani adalah terus memberi Urea di fase ini; umbi gagal terbentuk (nglorot), daun terus menjalar, dan leher umbi tidak mau mengunci."
+    };
+    return {
+      title: "Fase Pembesaran Umbi Super",
+      explanation: "Full Kalium & Sulfat (Pupuk ZK). Mengisi dan membesarkan size umbi tanpa merusak kadar air.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Pantangan keras menggunakan senyawa Klorida (KCL) pada tanaman Bawang & Kentang! Klorida memang membesarkan, tapi menarik air luar biasa. Hasilnya? Umbi susut parah saat disimpan dan gembos berair busuk."
+    };
+  }
+
+  if (cat === 'Legum') {
+    if (week <= 3) return {
+      title: "Fase Pembentukan Bintil Akar Fiksasi",
+      explanation: "Fosfat tinggi (SP-36/Ultradap) wajib masuk awal. Legum menuntut Fosfat agar bakteri baik Rhizobium sukses bersimbiosis membentuk bintil pencari Nitrogen.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Berhentilah memboroskan Urea! Legum sehat memproduksi Nitrogennya sendiri langsung dari udara. Ureanya cukup pancingan sedikit saja. Fokus perkuat perakaran!"
+    };
+    return {
+      title: "Fase Berbunga & Pengisian Polong",
+      explanation: "Kalium Tinggi & Kalsium untuk menahan kerontokan buah bunga dan agar setiap 'kamar' di dalam polong terisi biji rata.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Kurang Boron & Kalsium membuat polong melintir bengkok dan 'Kempong' alias hampa tak berisi. Jauhkan dari penggunaan insektisida panas (EC) saat bunga legum mekar agar tidak rontok gosong."
+    };
+  }
+
+  if (cat === 'Tanaman Industri') {
+    if (week <= 12) return {
+      title: "Fase Pertumbuhan Pelepah & Akar",
+      explanation: "Nitrogen & Fosfat (Urea + SP-36) untuk membuka luas pelepah daun (pada sawit) dan pertambahan cabang tajuk (kopi/kakao).",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Untuk memacu lingkar batang bawah, pastikan aplikasi pupuk tidak ditabur di pangkal, tapi di garis jatuhnya air ujung pelepah daun terluar (iringan)."
+    };
+    return {
+      title: "Fase Inisiasi Bunga Betina (Pencegahan Aborsi)",
+      explanation: "Masuknya Magnesium (Kiserit), Kalium (MOP), dan Borate (Boron). Nutrisi ini penentu apakah bunga akan ceto/jadi buah atau malah keluar bunga jantan melulu.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Khusus Sawit, defisiensi Boron sangat fatal menyebabkan 'Daun Berkerut' (little leaf) & memendek. Tajuk memendek berarti buah yang keluar hanya buah kecil sebesar landak / gagal total."
+    };
+  }
+
+  // Hortikultura (Cabai, Tomat, Terong, Pare, dll)
   if (week <= 4) return {
     title: "Fase Vegetatif Awal (Akar & Tunas)",
     explanation: "Sangat membutuhkan Fosfat (P) tinggi (cth: Ultradap / Calcinit) untuk memperpanjang akar dan mencegah stres pindah tanam, ditambah Nitrogen (N) untuk memacu keluarnya daun baru.",
@@ -214,6 +275,27 @@ export function getExpectedResult(week: number, soilType: string = 'Normal', pla
     if (week <= 3) return `Anakan lebat, daun bendera berkembang optimal untuk menopang produksi karbohidrat.`;
     if (week <= 7) return `Mencegah kerebahan dan kegagalan primordia bulir, tangkai malai menjadi tangguh.`;
     return `Pengisian butir/bulir hingga pangkal (bernaz) dengan efektivitas pengurasan asimilat dari daun ke biji mentok 100%.`;
+  }
+
+  if (cat === 'Sayuran Daun') {
+    if (week <= 2) return `Daun pecah rimbun dengan klorofil pekat. Tangkai daun mulai membesar tegak.`;
+    return `Bobot panen per polybag/karung padat berisi. Jaringan helai daun renyah (crispy) dan tidak mudah layu saat transportasi pasca panen.`;
+  }
+
+  if (cat === 'Umbi') {
+    if (week <= 3) return `Populasi tanaman hidup 100%, tunas serempak, aroma daun menyengat (tanda sulfur cukup).`;
+    if (week <= 6) return `Nutrisi pindah dari daun ke pangkal. Pembentukan 'dompolan' umbi maksimal di bawah tanah ${soilType}.`;
+    return `Umbi membengkak keras, warna kulit bersinar kemerahan/cerah, dan bobot spesifik tinggi tanpa kandungan air berlebih.`;
+  }
+
+  if (cat === 'Legum') {
+    if (week <= 3) return `Bedengan tertutup daun merambat. Bintil akar kemerahan aktif menambat Nitrogen gratis dari alam.`;
+    return `Gugusan bunga serempak jadi polong. Bentuk polong lurus, padat, tidak kempong, dan tahan pecah kulit.`;
+  }
+
+  if (cat === 'Tanaman Industri') {
+    if (week <= 12) return `Membuka luas bentangan pelepah yang lebar dan tangguh. Hijau daun pekat dengan kanopi ideal.`;
+    return `Tandan bunga terselamatkan dari aborsi jantan. Bakal buah tumbuh sekeliling bonggol, bebas dari busuk jamur marasmius.`;
   }
 
   // Hortikultura
@@ -350,6 +432,137 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
         isCompleted: false
       });
     });
+    return schedules;
+  }
+
+  if (cat === 'Tanaman Industri') {
+    // Generate schedule every month (every 4 weeks) for 1 year (48 weeks) similar to Pohon Buah but different ferts
+    for (let w = 4; w <= 48; w += 4) {
+      let taburFert: string[] = [];
+      let taburDosis: string[] = [];
+      let semprotFert: string[] = [];
+      let semprotDosis: string[] = [];
+
+      if (w <= 12) {
+        taburFert = ['Urea', 'SP-36'];
+        taburDosis = ['200 gr / pohon', '200 gr / pohon'];
+        semprotFert = ['Fungisida Mankozeb', 'Insek Imidakloprid'];
+        semprotDosis = ['2 gr/L', '1 ml/L'];
+      } else if (w <= 24) {
+        taburFert = ['YaraMila 16-16-16', 'Kiserit (Magnesium)'];
+        taburDosis = ['300 gr / pohon', '150 gr / pohon'];
+        semprotFert = ['Borate / Boron Folier'];
+        semprotDosis = ['2 gr/L'];
+      } else {
+        taburFert = ['MOP (Kalium Klorida)', 'Pupuk Kandang (Fermentasi)'];
+        taburDosis = ['400 gr / pohon', '10 kg / pohon'];
+        semprotFert = ['Insek Klorantraniliprol'];
+        semprotDosis = ['Sesuai Kemasan'];
+      }
+
+      const date = addDays(start, w * 7);
+      schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Tabur', fertilizers: taburFert, dosages: taburDosis, isCompleted: false });
+      
+      const semprotDate = addDays(start, w * 7 + 3);
+      schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
+    }
+    return schedules;
+  }
+
+  if (cat === 'Sayuran Daun') {
+    // Short fast schedule (every week for 4-5 weeks)
+    for (let w = 1; w <= 5; w++) {
+      let kocorFert: string[] = [];
+      let kocorDosis: string[] = [];
+      let semprotFert: string[] = [];
+      let semprotDosis: string[] = [];
+
+      if (w <= 2) {
+        kocorFert = ['YaraMila 16-16-16', 'Urea'];
+        kocorDosis = ['15 gr/tangki', '10 gr/tangki'];
+        semprotFert = ['Pupuk Daun (NitratTinggi)', 'Insek Abamektin'];
+        semprotDosis = ['2 gr/L', '1 ml/L'];
+      } else {
+        kocorFert = ['YaraMila 16-16-16', 'Kalsium Nitrat (Calcinit)'];
+        kocorDosis = ['20 gr/tangki', '15 gr/tangki'];
+        semprotFert = ['Asam Amino', 'Fungisida Propineb'];
+        semprotDosis = ['2 ml/L', '2 gr/L'];
+      }
+
+      const date = addDays(start, w * 7);
+      schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Kocor', fertilizers: kocorFert, dosages: kocorDosis, isCompleted: false });
+      
+      const semprotDate = addDays(start, w * 7 + 3);
+      schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
+    }
+    return schedules;
+  }
+
+  if (cat === 'Umbi') {
+    // Approx 12-16 weeks. We generate every 2 weeks.
+    for (let w = 2; w <= 16; w += 2) {
+      let baseFert: string[] = [];
+      let baseDosis: string[] = [];
+      let semprotFert: string[] = [];
+      let semprotDosis: string[] = [];
+
+      if (w <= 4) {
+        baseFert = ['YaraMila 16-16-16', 'ZA (Amonium Sulfat)'];
+        baseDosis = ['20 gr/tangki', '10 gr/tangki'];
+        semprotFert = ['Fungisida Mankozeb', 'Insek Imidakloprid'];
+        semprotDosis = ['2 gr/L', '1 ml/L'];
+      } else if (w <= 8) {
+        baseFert = ['MKP', 'KNO3 Putih']; // Stop Nitrogen
+        baseDosis = ['20 gr/tangki', '10 gr/tangki'];
+        semprotFert = ['Boron', 'Fungisida Difenokonazol'];
+        semprotDosis = ['1 gr/L', '1 ml/L'];
+      } else {
+        baseFert = ['ZK (Kalium Sulfat)', 'YaraMila Winner (15-9-20)']; // Kalium tinggi tanpa Klorida
+        baseDosis = ['30 gr/tangki', '20 gr/tangki'];
+        semprotFert = ['Meroke Provit Merah', 'Insek Abamektin'];
+        semprotDosis = ['2 gr/L', '1 ml/L'];
+      }
+
+      const date = addDays(start, w * 7);
+      schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Kocor', fertilizers: baseFert, dosages: baseDosis, isCompleted: false });
+      
+      const semprotDate = addDays(start, w * 7 + 3);
+      schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
+    }
+    return schedules;
+  }
+
+  if (cat === 'Legum') {
+    // Short lifecycle 10-12 weeks. Generate every 2 weeks.
+    for (let w = 2; w <= 12; w += 2) {
+      let baseFert: string[] = [];
+      let baseDosis: string[] = [];
+      let semprotFert: string[] = [];
+      let semprotDosis: string[] = [];
+
+      if (w <= 4) {
+        baseFert = ['SP-36', 'YaraMila 16-16-16']; // High P for root nodules
+        baseDosis = ['20 gr/tangki', '10 gr/tangki'];
+        semprotFert = ['Pupuk Mikro (Molybdenum/Mo)', 'Insek Imidakloprid'];
+        semprotDosis = ['1 gr/L', '1 ml/L'];
+      } else if (w <= 8) {
+        baseFert = ['YaraMila Winner (15-9-20)'];
+        baseDosis = ['25 gr/tangki'];
+        semprotFert = ['Boron', 'Fungisida Mankozeb'];
+        semprotDosis = ['1 gr/L', '2 gr/L'];
+      } else {
+        baseFert = ['KNO3 Putih', 'Kalsium Nitrat (Calcinit)'];
+        baseDosis = ['25 gr/tangki', '15 gr/tangki'];
+        semprotFert = ['Meroke Provit Merah'];
+        semprotDosis = ['2 gr/L'];
+      }
+
+      const date = addDays(start, w * 7);
+      schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Kocor', fertilizers: baseFert, dosages: baseDosis, isCompleted: false });
+      
+      const semprotDate = addDays(start, w * 7 + 3);
+      schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
+    }
     return schedules;
   }
 
