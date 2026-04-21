@@ -25,14 +25,17 @@ Riwayat: ${historyInfo}
 Lakukan analisa mendalam. Hitung probabilitas masalah menggunakan sistem skoring berdasarkan input pengguna dan aturan agronomi.
 
 PENTING:
-Pengguna meminta Anda untuk menggunakan standar PUPUK TERBAIK (Premium) tanpa batasan harga. Jangan lagi membatasi pada pupuk "merakyat". Gunakan pupuk kelas atas yang kualitas dan kelarutannya paling efektif (misalnya: seri YaraMila, YaraLiva Calcinit, Meroke, KNO3 Prill/Kristal, MKP premium, Chelated Trace Elements, dsb).
+1. PENGGUNAAN PUPUK & OBAT TERBAIK: Gunakan standar Premium tanpa batasan harga. Jangan gunakan pupuk subsidi. Gunakan yang kualitas dan kelarutannya paling efektif (misal: YaraMila, Calcinit, Meroke, KNO3, unsur mikro chelated, fungisida sistemik gol. Azol/Strobilurin, insektisida bahan aktif seperti Abamektin/Imidakloprid/Klorantraniliprol).
+2. PROTEKSI & PENCEGAHAN: Selain menyembuhkan, Anda WAJIB memberikan rekomendasi proteksi sistemik untuk mencegah penularan/masalah sekunder (misal jika hama kutu, sertakan pencegahan virus).
+3. Detail Kandungan Hara / Bahan Aktif: Saat memberikan rekomendasi pupuk, sertakan NPK & mikro. Jika meresepkan pestisida, sebutkan Bahan Aktifnya secara spesifik.
+4. Expected Outcome (Target Hasil): Berikan penjelasan mendalam berbasis fisiologis mengapa treatment ini digunakan dan bagaimana ia membunuh patogen atau memperbaiki jaringan tanaman. Jangan gunakan bahasa klise/buku teks, gunakan insight kelas konsultan lapang.
 
 Aturan Interval Berdasarkan Jenis Tanah:
-- Berpasir (Porous): Sangat rentan pencucian (leaching). WAJIB direkomendasikan aplikasi pupuk dengan interval yang lebih sering (misal: 3 hari sekali) tetapi dosis dikurangi (spoon-feeding).
-- Liat / Lempung (Padat): Mengikat air dan hara. Gunakan dosis standar atau sedikit lebih tinggi, dengan interval normal (misal 1-2 minggu sekali). Hati-hati akumulasi dan residu.
-- Gambut (Asam): Berikan rekomendasi yang memasukkan pembenah pH cepat (contoh dolomit cair / pupuk berbasis Kalsium Nitrat kualitas tinggi).
+- Berpasir (Porous): Sangat rentan pencucian. WAJIB aplikasi pupuk lebih sering (spoon-feeding).
+- Liat / Lempung (Padat): Mengikat air dan hara. Dosis standar normal. Cenderung rentan layu jamur.
+- Gambut (Asam): Berikan rekomendasi yang memasukkan pembenah pH cepat (contoh dolomit cair / Kalsium Nitrat).
 
-Berikan rekomendasi spesifik dengan: Jenis pupuk/obat, Dosis, Cara aplikasi, dan Frekuensi.
+Berikan rekomendasi spesifik dengan: Jenis pupuk/obat, Dosis, Cara aplikasi, Frekuensi, Kandungan NPK/Bahan Aktif, dan Expected Outcome.
 Berikan persentase kemungkinan (confidence) dari 0-100.
 Tingkat keparahan (severity) harus salah satu dari: "Ringan", "Sedang", atau "Berat".
 `;
@@ -69,7 +72,9 @@ Tingkat keparahan (severity) harus salah satu dari: "Ringan", "Sedang", atau "Be
             jenis: { type: Type.STRING },
             dosis: { type: Type.STRING },
             cara: { type: Type.STRING },
-            frekuensi: { type: Type.STRING }
+            frekuensi: { type: Type.STRING },
+            kandunganNPK: { type: Type.STRING, description: "Kandungan nilai NPK eksak. Contoh: N:15%, P:9%, K:20%" },
+            expectedOutcome: { type: Type.STRING, description: "Efek nyata di tanaman setelah aplikasi ini" }
           }
         }
       }

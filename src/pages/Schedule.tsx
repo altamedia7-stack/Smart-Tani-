@@ -138,7 +138,7 @@ export default function Schedule() {
 
                           <div className="bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
                             <div className="text-[11px] font-bold text-blue-800 uppercase tracking-wider mb-1">Target Hasil</div>
-                            <p className="text-xs text-blue-700 font-medium leading-relaxed">{getExpectedResult(sched.weekNumber)}</p>
+                            <p className="text-xs text-blue-700 font-medium leading-relaxed">{getExpectedResult(sched.weekNumber, plant.soilType || 'Normal')}</p>
                           </div>
 
                         </div>

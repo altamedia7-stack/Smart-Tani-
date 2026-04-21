@@ -34,6 +34,8 @@ export interface DiagnosisResult {
     dosis: string;
     cara: string;
     frekuensi: string;
+    kandunganNPK?: string;
+    expectedOutcome?: string;
   }[];
   rawReasoning?: string;
 }

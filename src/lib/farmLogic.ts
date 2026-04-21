@@ -32,7 +32,14 @@ const NUTRIENT_MAP: Record<string, string> = {
   'Ultradap': 'N: 12%, P: 60%',
   'Gandasil D': 'N: 20%, P: 15%, K: 15%',
   'Gandasil B': 'N: 6%, P: 20%, K: 30%',
-  'Boron': 'Boron: 100%'
+  'Boron': 'Boron: 100%',
+  'Meroke Provit Hijau': 'N: 27%, P: 10%, K: 16%, TE',
+  'Meroke Provit Merah': 'N: 15%, P: 10%, K: 35%, TE',
+  'Chelated Trace Elements (Micro)': 'Fe, Mn, Zn, Cu, B, Mo',
+  'Fungisida Mankozeb + Insek Imidakloprid': 'Proteksi: Jamur Tanah & Kutu (Vektor Virus)',
+  'Insek Abamektin (Cegah Thrips/Keriting)': 'Proteksi: Thrips & Tungau Mites',
+  'Fungisida Difenokonazol (Cegah Patek)': 'Proteksi: Jamur Antraknosa (Patek)',
+  'Insek Klorantraniliprol (Cegah Ulat)': 'Proteksi: Ulat Grayak & Penggerek Buah'
 };
 
 export function formatFertilizerName(f: string): string {
@@ -80,6 +87,8 @@ export function getNPKRatio(fertilizers: string[]): { n: number; p: number; k: n
     else if (name.includes('mkp')) { p += 52; k += 34; }
     else if (name.includes('gandasil d') || name.includes('poc daun')) { n += 20; p += 15; k += 15; }
     else if (name.includes('gandasil b') || name.includes('poc buah')) { n += 6; p += 20; k += 30; }
+    else if (name.includes('provit hijau')) { n += 27; p += 10; k += 16; }
+    else if (name.includes('provit merah')) { n += 15; p += 10; k += 35; }
   });
 
   const total = n + p + k || 1; // avoid div by 0
@@ -95,31 +104,31 @@ export function getNPKRatio(fertilizers: string[]): { n: number; p: number; k: n
 export function getDominantNutrient(week: number): { title: string, explanation: string, comparison: string } {
   if (week <= 4) return {
     title: "Fase Vegetatif Awal (Akar & Tunas)",
-    explanation: "Sangat membutuhkan Fosfat (P) tinggi (cth: Ultradap) untuk memperpanjang akar dan mencegah stres pindah tanam, ditambah Nitrogen (N) untuk memacu keluarnya daun baru.",
-    comparison: "💡 Tips Petani Pemula: Banyak yang asal beri Urea/Phonska di awal. Padahal, jika kita pakai pupuk tinggi Fosfat di minggu awal, perakaran akan sangat rimbun (gondrong). Akar rimbun = kuat makan pupuk NPK di minggu-minggu berikutnya."
+    explanation: "Sangat membutuhkan Fosfat (P) tinggi (cth: Ultradap / Calcinit) untuk memperpanjang akar dan mencegah stres pindah tanam, ditambah Nitrogen (N) untuk memacu keluarnya daun baru.",
+    comparison: "💡 Ilmu Agronomi Lanjutan: Nitrogen berlebih di fase awal justru membuat dinding sel tipis & ranum, sangat mengundang Kutu Kebul (vektor Virus Bule/Gemini). Fokuslah pada Kalsium (Ca) dan Fosfat + pencegahan sistemik (Imidakloprid) agar tanaman membangun 'tembok baja' secara mekanis maupun kimiawi sejak dini."
   };
   if (week <= 8) return {
     title: "Fase Vegetatif Lanjut (Cabang & Batang)",
-    explanation: "Membutuhkan N-P-K yang seimbang (cth: NPK Mutiara 16-16-16) untuk ukuran daun yang maksimal, fotosintesis tinggi, dan membuat dinding batang menjadi kaku.",
-    comparison: "💡 Tips Petani Pemula: Jika fase awal fokus pemanjangan akar, fase ini fokus 'membangun tiang' pondasi. Tanaman harus punya batang kokoh agar tidak roboh menahan beban buah yang berat nanti."
+    explanation: "Membutuhkan N-P-K yang seimbang (cth: YaraMila 16-16-16) dicampur unsur mikro chelated untuk ukuran daun yang maksimal, fotosintesis tinggi, dan membuat dinding batang menjadi kaku.",
+    comparison: "💡 Ilmu Agronomi Lanjutan: Jangan hanya mengejar klorofil daun. Fase ini rentan serangan Thrips/Tungau yang memakan meristem pucuk sehingga daun keriting. Rotasi Abamektin wajib disertakan saat penyemprotan asam amino/unsur mikro untuk menjaga rasio 'Sink and Source' tetap stabil tanpa intervensi hama."
   };
   if (week <= 12) return {
     title: "Fase Generatif Awal (Pembungaan)",
-    explanation: "Fokus pada Fosfat (P) & Kalium (K) tinggi (cth: MKP), dan porsi unsur Nitrogen (N) harus diturunkan drastis. P lebatkan bunga, K cegukan panen rontok.",
-    comparison: "💡 Tips Petani Pemula: Kesalahan fatal pemula adalah terus memberi Urea di fase ini. N tinggi membuat tanaman asyik 'menumbuhkan daun' & lupa berbunga. Hentikan/kurangi N agar bunga keluar serempak."
+    explanation: "Fokus pada Fosfat (P) & Kalium (K) tinggi (cth: MKP Premium & KNO3), dan porsi unsur Nitrogen (N) harus diturunkan drastis. P lebatkan bunga, K cegukan panen rontok.",
+    comparison: "💡 Ilmu Agronomi Lanjutan: Hukum Antagonisme Hara: Pemberian Kalium (K) dosis tinggi untuk membungakan akan otomatis memblokir penyerapan Kalsium (Ca) dari tanah. Akibatnya? Bunga lebat tapi ujung buah menghitam/busuk (Blossom End Rot). Selalu suplai foliar Kalsium-Boron di pagi hari dan cegah cuaca lembab dengan Fungisida Golongan Azol (Difenokonazol) anti-patek."
   };
   return {
     title: "Fase Generatif Lanjut (Pembesaran Panen)",
-    explanation: "Sangat dominan membutuhkan Kalium (K) tinggi (cth: KNO3 Putih / KCL) untuk pembesaran, rasa (kemanisan), warna cerah, dan bobot buah berat.",
-    comparison: "💡 Tips Petani Pemula: Ibarat manusia, ini fase 'penggemukan'. Unsur Kalium menarik seluruh gizi tanaman ke buah. Tanpa Kalium tinggi, buah gampang kerdil, rasanya hambar, dan mudah busuk saat disimpan/dikirim."
+    explanation: "Sangat dominan membutuhkan Kalium (K) tinggi (cth: YaraMila Winner / KNO3 Putih) untuk pembesaran, rasa (kemanisan), warna cerah, dan bobot buah berat.",
+    comparison: "💡 Ilmu Agronomi Lanjutan: Serangga tidak memiliki organ pankreas. Dengan memompa Kalium & Unsur Mikro ke ambang maksimal, kadar gula (Brix) pada getah tanaman akan melonjak tajam. Serangga yang nekat menghisap getah ber-Brix ekstra tinggi akan mati keracunan gula. Kombinasikan bio-defense alami ini dengan Klorantraniliprol untuk proteksi absolut."
   };
 }
 
-export function getExpectedResult(week: number): string {
-  if (week <= 4) return "Fase Awal: Merangsang pembentukan akar baru yang kuat dan perluasan tunas hijau (Vege awal).";
-  if (week <= 8) return "Fase Pertumbuhan: Mempertebal daun, batang lebih kokoh, dan memaksimalkan kapasitas fotosintesis (Vege lanjut).";
-  if (week <= 12) return "Fase Pembungaan: Memicu bakal bunga yang lebat dan mencegah kerontokan bunga (Generatif awal).";
-  return "Fase Pembuahan: Membesarkan ukuran buah, meningkatkan bobot panen, dan mempercepat pematangan buah (Generatif lanjut).";
+export function getExpectedResult(week: number, soilType: string = 'Normal'): string {
+  if (week <= 4) return `Fase Awal: Ultradap/Calcinit & YaraMila merangsang perakaran kuat serta tunas hijau. Penyerapan dioptimalkan untuk kondisi tanah ${soilType} guna menghindari defisiensi dini.`;
+  if (week <= 8) return `Fase Pertumbuhan: Mempertebal daun dan dinding sel batang secara maksimal. Hara seimbang dan Trace Elements memastikan kapasitas fotosintesis puncak tanpa gejala klorosis.`;
+  if (week <= 12) return "Fase Pembungaan: MKP dan KNO3 Putih bekerja sinergis mencetak jumlah bakal bunga terbanyak (super blossom) dan Boron mengunci bunga agar anti-rontok.";
+  return "Fase Pembuahan: YaraMila Winner & KNO3 Prill mendongkrak pencapaian bobot, kepadatan tekstur, warna mengkilap, dan level kemanisan buah hingga ambang genetis tertingginya.";
 }
 
 // Fitur 2: Generate jadwal otomatis
@@ -149,23 +158,23 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
     if (w <= 4) {
       kocorFert = ['YaraMila 16-16-16', isGambut ? 'Kalsium Nitrat (Calcinit)' : 'Ultradap'];
       kocorDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `${(1 * doseMod).toFixed(1)} gr/L`];
-      semprotFert = ['Gandasil D (Atau setara)'];
-      semprotDosis = [`${(1.5 * doseMod).toFixed(1)} gr/L`];
+      semprotFert = ['Meroke Provit Hijau', 'Chelated Trace Elements (Micro)', 'Fungisida Mankozeb + Insek Imidakloprid'];
+      semprotDosis = [`${(1.5 * doseMod).toFixed(1)} gr/L`, `${(0.5 * doseMod).toFixed(1)} gr/L`, `Sesuai Kemasan`];
     } else if (w <= 8) {
       kocorFert = ['YaraMila 16-16-16'];
       kocorDosis = [`${(3 * doseMod).toFixed(1)} gr/L`];
-      semprotFert = ['Gandasil D'];
-      semprotDosis = [`${(1.5 * doseMod).toFixed(1)} gr/L`];
+      semprotFert = ['Meroke Provit Hijau', 'Insek Abamektin (Cegah Thrips/Keriting)'];
+      semprotDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `Sesuai Kemasan`];
     } else if (w <= 12) {
       kocorFert = ['MKP', 'KNO3 Putih'];
       kocorDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `${(1.5 * doseMod).toFixed(1)} gr/L`];
-      semprotFert = ['Gandasil B', 'Boron'];
-      semprotDosis = [`${(1.5 * doseMod).toFixed(1)} gr/L`, `${(0.5 * doseMod).toFixed(1)} gr/L`];
+      semprotFert = ['Meroke Provit Merah', 'Boron', 'Fungisida Difenokonazol (Cegah Patek)'];
+      semprotDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `${(0.5 * doseMod).toFixed(1)} gr/L`, `Sesuai Kemasan`];
     } else {
       kocorFert = ['YaraMila Winner (15-9-20)', 'KNO3 Putih'];
       kocorDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `${(2 * doseMod).toFixed(1)} gr/L`];
-      semprotFert = ['Gandasil B'];
-      semprotDosis = [`${(1.5 * doseMod).toFixed(1)} gr/L`];
+      semprotFert = ['Meroke Provit Merah', 'Insek Klorantraniliprol (Cegah Ulat)'];
+      semprotDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `Sesuai Kemasan`];
     }
 
     // kocor

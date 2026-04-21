@@ -111,6 +111,20 @@ export default function Scanner() {
                   <span><span className="text-emerald-600 font-bold">Dosis:</span> {rec.dosis}</span>
                   <span><span className="text-emerald-600 font-bold">Frekuensi:</span> {rec.frekuensi}</span>
                 </div>
+                {(rec.kandunganNPK || rec.expectedOutcome) && (
+                  <div className="mt-2 pt-2 border-t border-emerald-50 space-y-1.5 flex flex-col">
+                    {rec.kandunganNPK && (
+                      <div className="text-[11px] text-emerald-800 bg-emerald-50/50 p-1.5 rounded-lg border border-emerald-100/50">
+                        <span className="font-black uppercase tracking-wider text-emerald-600 target-label">{rec.jenis.toLowerCase().includes('insek') || rec.jenis.toLowerCase().includes('fungi') || rec.jenis.toLowerCase().includes('pestisida') || rec.kandunganNPK.toLowerCase().includes('bahan aktif') ? 'Bahan Aktif:' : 'Hara:'}</span> {rec.kandunganNPK}
+                      </div>
+                    )}
+                    {rec.expectedOutcome && (
+                      <div className="text-[11px] text-blue-800 bg-blue-50/50 p-1.5 rounded-lg border border-blue-100/50">
+                        <span className="font-black uppercase tracking-wider text-blue-600 target-label">Target:</span> {rec.expectedOutcome}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>
