@@ -7,6 +7,7 @@ export interface Plant {
   location?: string;
   status: 'Sehat' | 'Warning' | 'Sakit';
   economyMode: boolean;
+  soilType?: string;
 }
 
 export type FertType = 'Kocor' | 'Semprot' | 'Tabur';

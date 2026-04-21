@@ -3,7 +3,7 @@ import { useFarm } from '../store/FarmContext';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { CheckCircle2, Circle } from 'lucide-react';
-import { getPlantAge, getNutrientContent, getExpectedResult, formatFertilizerName, getDominantNutrient } from '../lib/farmLogic';
+import { getPlantAge, getNutrientContent, getExpectedResult, formatFertilizerName, getDominantNutrient, getNPKRatio } from '../lib/farmLogic';
 
 export default function Schedule() {
   const { schedules, activePlantId, markScheduleCompleted, plants } = useFarm();
@@ -90,16 +90,50 @@ export default function Schedule() {
                             </div>
                           </div>
 
-                          <div className="bg-green-50/50 p-3 rounded-xl border border-green-100/50 space-y-1.5">
+                          <div className="bg-green-50/50 p-3 rounded-xl border border-green-100/50 space-y-2">
                             <div className="text-[11px] font-bold text-green-800 uppercase tracking-wider">Kandungan Hara</div>
-                            <div className="text-xs text-green-700 font-medium space-y-0.5">
+                            
+                            {/* NPK Visual Bar */}
+                            {(() => {
+                              const ratio = getNPKRatio(sched.fertilizers);
+                              const total = ratio.n + ratio.p + ratio.k || 1;
+                              const pN = (ratio.n / total) * 100;
+                              const pP = (ratio.p / total) * 100;
+                              const pK = (ratio.k / total) * 100;
+                              
+                              if (total > 1) {
+                                return (
+                                  <div className="mb-2">
+                                    <div className="flex h-3 w-full rounded-full overflow-hidden bg-white shadow-inner mb-1 text-[8px] font-bold text-white text-center leading-3">
+                                      <div style={{ width: `${pN}%` }} className="bg-emerald-500 h-full">{pN > 15 ? 'N' : ''}</div>
+                                      <div style={{ width: `${pP}%` }} className="bg-blue-500 h-full">{pP > 15 ? 'P' : ''}</div>
+                                      <div style={{ width: `${pK}%` }} className="bg-orange-500 h-full">{pK > 15 ? 'K' : ''}</div>
+                                    </div>
+                                    <div className="flex justify-between text-[10px] text-gray-500 font-medium px-0.5">
+                                      <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-sm bg-emerald-500"></div>N: {Math.round(pN)}%</span>
+                                      <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-sm bg-blue-500"></div>P: {Math.round(pP)}%</span>
+                                      <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-sm bg-orange-500"></div>K: {Math.round(pK)}%</span>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            })()}
+
+                            <div className="text-xs text-green-700 font-medium space-y-0.5 pt-1 border-t border-green-100 italic">
                                {Array.from(new Set(getNutrientContent(sched.fertilizers))).map(n => <div key={n}>• {n}</div>)}
                             </div>
                           </div>
 
-                          <div className="bg-amber-50/50 p-3 rounded-xl border border-amber-100/50">
-                            <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-1">Kebutuhan Unsur Dominan</div>
-                            <p className="text-xs text-amber-700 font-medium leading-relaxed">{getDominantNutrient(sched.weekNumber)}</p>
+                          <div className="bg-amber-50/80 p-3 rounded-xl border border-amber-200/60 shadow-sm">
+                            <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-2">Kebutuhan Unsur Dominan & Edukasi</div>
+                            <div className="space-y-2">
+                              <p className="text-xs text-amber-900 font-bold">{getDominantNutrient(sched.weekNumber).title}</p>
+                              <p className="text-xs text-amber-800 font-medium leading-relaxed">{getDominantNutrient(sched.weekNumber).explanation}</p>
+                              <div className="bg-amber-100/70 p-2 rounded-lg text-[11px] text-amber-900 leading-relaxed font-semibold">
+                                {getDominantNutrient(sched.weekNumber).comparison}
+                              </div>
+                            </div>
                           </div>
 
                           <div className="bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">

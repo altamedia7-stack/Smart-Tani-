@@ -5,30 +5,32 @@ export async function analyzePlantAI(
   base64Image: string | undefined, 
   symptoms: string[], 
   conditions: string[], 
-  historyInfo: string
+  historyInfo: string,
+  soilType?: string
 ): Promise<DiagnosisResult> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("Gemini API Key is missing");
 
   const ai = new GoogleGenAI({ apiKey });
+  
+  const soilContext = soilType ? `\nJenis Tanah: ${soilType}` : '';
 
   const prompt = `
-Anda adalah asisten konsultan pertanian semi-profesional.
+Anda adalah konsultan agronomi profesional tingkat dunia.
 Berdasarkan data berikut (dan gambar jika ada):
 Gejala: ${symptoms.join(', ')}
-Kondisi Lingkungan: ${conditions.join(', ')}
+Kondisi Lingkungan: ${conditions.join(', ')}${soilContext}
 Riwayat: ${historyInfo}
 
-Lakukan analisa mendalam layaknya konsultan pertanian. Hitung probabilitas masalah menggunakan sistem skoring berdasarkan input pengguna dan aturan agronomi.
+Lakukan analisa mendalam. Hitung probabilitas masalah menggunakan sistem skoring berdasarkan input pengguna dan aturan agronomi.
 
-Jika pengguna melaporkan:
-- Daun kuning tanpa bercak = Kekurangan Nitrogen
-- Bercak hitam di kondisi lembab = Penyakit jamur (Antraknosa)
-- Daun keriting = Hama / virus
-- Buah kecil = Kekurangan Kalium
-- Bunga rontok = Kekurangan Fosfat/Boron
+PENTING:
+Pengguna meminta Anda untuk menggunakan standar PUPUK TERBAIK (Premium) tanpa batasan harga. Jangan lagi membatasi pada pupuk "merakyat". Gunakan pupuk kelas atas yang kualitas dan kelarutannya paling efektif (misalnya: seri YaraMila, YaraLiva Calcinit, Meroke, KNO3 Prill/Kristal, MKP premium, Chelated Trace Elements, dsb).
 
-Utamakan rekomendasi menggunakan pupuk komersial/non-subsidi yang harganya terjangkau dan mudah didapat di pasaran lokal (contoh: NPK Mutiara 16-16-16, SP-36, Urea, ZA, KCl, Gandasil D/B, POC, atau pupuk kandang). Hindari keterpakuan pada merk premium yang mahal kecuali sangat dibutuhkan. Jangan merekomendasikan pupuk subsidi seperti NPK Phonska.
+Aturan Interval Berdasarkan Jenis Tanah:
+- Berpasir (Porous): Sangat rentan pencucian (leaching). WAJIB direkomendasikan aplikasi pupuk dengan interval yang lebih sering (misal: 3 hari sekali) tetapi dosis dikurangi (spoon-feeding).
+- Liat / Lempung (Padat): Mengikat air dan hara. Gunakan dosis standar atau sedikit lebih tinggi, dengan interval normal (misal 1-2 minggu sekali). Hati-hati akumulasi dan residu.
+- Gambut (Asam): Berikan rekomendasi yang memasukkan pembenah pH cepat (contoh dolomit cair / pupuk berbasis Kalsium Nitrat kualitas tinggi).
 
 Berikan rekomendasi spesifik dengan: Jenis pupuk/obat, Dosis, Cara aplikasi, dan Frekuensi.
 Berikan persentase kemungkinan (confidence) dari 0-100.

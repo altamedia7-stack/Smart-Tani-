@@ -20,8 +20,9 @@ export default function Dashboard() {
     const name = (form.elements.namedItem('name') as HTMLInputElement).value;
     const plantingDate = (form.elements.namedItem('plantingDate') as HTMLInputElement).value;
     const location = (form.elements.namedItem('location') as HTMLInputElement).value;
+    const soilType = (form.elements.namedItem('soilType') as HTMLSelectElement).value;
     
-    addPlant({ name, plantingDate, location, economyMode: false });
+    addPlant({ name, plantingDate, location, soilType, economyMode: false });
     setShowAdd(false);
   };
 
@@ -42,6 +43,16 @@ export default function Dashboard() {
               <div className="space-y-2">
                 <Label htmlFor="plantingDate">Tanggal Tanam</Label>
                 <Input id="plantingDate" type="date" defaultValue={new Date().toISOString().split('T')[0]} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="soilType">Jenis Tanah</Label>
+                <select id="soilType" name="soilType" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" required>
+                  <option value="">Pilih Jenis Tanah...</option>
+                  <option value="Gembur / Humus (Subur)">Gembur / Humus (Subur)</option>
+                  <option value="Liat / Lempung (Padat)">Liat / Lempung (Padat)</option>
+                  <option value="Berpasir (Porous)">Berpasir (Porous)</option>
+                  <option value="Gambut (Asam)">Gambut (Asam)</option>
+                </select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="location">Lokasi (Opsional)</Label>

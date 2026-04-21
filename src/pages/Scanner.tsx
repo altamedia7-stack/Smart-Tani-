@@ -10,7 +10,7 @@ import { getBase64 } from '../lib/utils';
 import { Camera, Image as ImageIcon, Loader2, Info } from 'lucide-react';
 
 export default function Scanner() {
-  const { activePlantId, addHistory, updatePlantStatus, recalculateSchedule } = useFarm();
+  const { activePlantId, addHistory, updatePlantStatus, recalculateSchedule, plants } = useFarm();
   
   const [image, setImage] = useState<string>();
   const [loading, setLoading] = useState(false);
@@ -34,6 +34,9 @@ export default function Scanner() {
     if (!activePlantId) return alert("Pilih tanaman dulu");
     if (!symptoms.trim() && !image) return alert("Masukkan foto atau gejala minimal!");
     
+    const activePlant = plants.find(p => p.id === activePlantId);
+    const currentSoilType = activePlant?.soilType || '';
+
     setLoading(true);
     try {
       const sympList = symptoms.split(',').map(s => s.trim()).filter(Boolean);
@@ -41,7 +44,7 @@ export default function Scanner() {
       
       let res;
       try {
-        res = await analyzePlantAI(image, sympList, condList, historyInfo);
+        res = await analyzePlantAI(image, sympList, condList, historyInfo, currentSoilType);
       } catch (e) {
         console.warn("AI failed, falling back to rule engine", e);
         res = analyzeWithRuleEngine(sympList, condList);

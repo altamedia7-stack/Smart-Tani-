@@ -1,5 +1,5 @@
 {
-  "name": "Smart Pupuk Tani AI",
+  "name": "Smart Tani",
   "description": "Aplikasi pertanian pintar untuk membantu petani mengatur jadwal pemupukan, mendeteksi penyakit tanaman dengan AI, dan memberikan rekomendasi pupuk otomatis berbasis analisa.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": []
