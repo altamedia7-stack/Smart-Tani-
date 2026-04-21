@@ -28,6 +28,8 @@ Jika pengguna melaporkan:
 - Buah kecil = Kekurangan Kalium
 - Bunga rontok = Kekurangan Fosfat/Boron
 
+Utamakan rekomendasi menggunakan pupuk komersial/non-subsidi yang harganya terjangkau dan mudah didapat di pasaran lokal (contoh: NPK Mutiara 16-16-16, SP-36, Urea, ZA, KCl, Gandasil D/B, POC, atau pupuk kandang). Hindari keterpakuan pada merk premium yang mahal kecuali sangat dibutuhkan. Jangan merekomendasikan pupuk subsidi seperti NPK Phonska.
+
 Berikan rekomendasi spesifik dengan: Jenis pupuk/obat, Dosis, Cara aplikasi, dan Frekuensi.
 Berikan persentase kemungkinan (confidence) dari 0-100.
 Tingkat keparahan (severity) harus salah satu dari: "Ringan", "Sedang", atau "Berat".

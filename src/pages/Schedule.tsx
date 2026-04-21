@@ -1,10 +1,9 @@
 import React from 'react';
 import { useFarm } from '../store/FarmContext';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { Button } from '../components/ui/button';
 import { CheckCircle2, Circle } from 'lucide-react';
-import { getPlantAge } from '../lib/farmLogic';
+import { getPlantAge, getNutrientContent, getExpectedResult, formatFertilizerName } from '../lib/farmLogic';
 
 export default function Schedule() {
   const { schedules, activePlantId, markScheduleCompleted, plants } = useFarm();
@@ -70,9 +69,39 @@ export default function Schedule() {
                             </div>
                           </div>
                         </div>
-                        <div className="text-sm text-gray-700 space-y-1">
-                          <p><span className="font-medium">Pupuk:</span> {sched.fertilizers.join(', ')}</p>
-                          <p><span className="font-medium">Dosis:</span> {sched.dosages.join(' | ')}</p>
+                        <div className="text-sm text-gray-700 space-y-3 mt-2">
+                          
+                          <div className="space-y-1">
+                            <div className="flex gap-2 items-start">
+                              <span className="font-medium min-w-[50px] text-gray-900">Pupuk:</span>
+                              <span>{Array.from(new Set(sched.fertilizers.map(f => formatFertilizerName(f)))).join(', ')}</span>
+                            </div>
+                            <div className="flex gap-2 items-start">
+                              <span className="font-medium min-w-[50px] text-gray-900">Dosis:</span>
+                              <span className="font-semibold text-green-700">{sched.dosages.map(d => {
+                                // Format legacy long decimal numbers safely
+                                const match = d.match(/^([\d.]+)(.*)$/);
+                                if (match && match[1].length > 4) {
+                                  const val = parseFloat(match[1]);
+                                  if (!isNaN(val)) return val.toFixed(1) + match[2];
+                                }
+                                return d;
+                              }).join(' | ')}</span>
+                            </div>
+                          </div>
+
+                          <div className="bg-green-50/50 p-3 rounded-xl border border-green-100/50 space-y-1.5">
+                            <div className="text-[11px] font-bold text-green-800 uppercase tracking-wider">Kandungan Hara</div>
+                            <div className="text-xs text-green-700 font-medium space-y-0.5">
+                               {Array.from(new Set(getNutrientContent(sched.fertilizers))).map(n => <div key={n}>• {n}</div>)}
+                            </div>
+                          </div>
+
+                          <div className="bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
+                            <div className="text-[11px] font-bold text-blue-800 uppercase tracking-wider mb-1">Target Hasil</div>
+                            <p className="text-xs text-blue-700 font-medium leading-relaxed">{getExpectedResult(sched.weekNumber)}</p>
+                          </div>
+
                         </div>
                       </div>
                     </CardContent>

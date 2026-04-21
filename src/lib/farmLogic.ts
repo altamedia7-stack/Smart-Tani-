@@ -17,6 +17,54 @@ export function getPlantPhase(weeks: number) {
   return 'Pembuahan (13+ minggu)';
 }
 
+const NUTRIENT_MAP: Record<string, string> = {
+  // Use specific names for mapping
+  'NPK Mutiara 16-16-16': 'N: 16%, P: 16%, K: 16%',
+  'Urea': 'N: 46%',
+  'SP-36': 'P: 36%',
+  'KCl': 'K: 60%',
+  'Gandasil D': 'N: 20%, P: 15%, K: 15%',
+  'Gandasil B': 'N: 6%, P: 20%, K: 30%',
+  'Boroni': 'Boron: 100%'
+};
+
+export function formatFertilizerName(f: string): string {
+  const mapper: Record<string, string> = {
+    // Translate all legacy or generic strings to specific products
+    'Pupuk Daun Nitrogen': 'Gandasil D',
+    'Pupuk Daun Mikro': 'Gandasil D',
+    'DAP / Ultra DAP': 'NPK Mutiara 16-16-16',
+    'NPK Grower': 'NPK Mutiara 16-16-16',
+    'KNO3 Putih': 'KCl',
+    'MKP': 'SP-36',
+    'KNO3 Merah': 'KCl',
+    'NPK Kalium Tinggi': 'NPK Mutiara 16-16-16',
+    'Boron': 'Boroni',
+    'NPK 16-16-16 (Phonska/Mutiara)': 'NPK Mutiara 16-16-16',
+    'NPK 16-16-16 (Phonska)': 'NPK Mutiara 16-16-16',
+    'SP-36 / TSP': 'SP-36',
+    'Gandasil D / POC Daun': 'Gandasil D',
+    'Gandasil B / POC Buah': 'Gandasil B',
+    'NPK Phonska': 'NPK Mutiara 16-16-16'
+  };
+  return mapper[f] || f;
+}
+
+export function getNutrientContent(fertilizers: string[]): string[] {
+  return fertilizers.map(f => {
+    const modernName = formatFertilizerName(f);
+    const nut = NUTRIENT_MAP[modernName];
+    return nut ? `${modernName} (${nut})` : `${modernName}`;
+  });
+}
+
+export function getExpectedResult(week: number): string {
+  if (week <= 4) return "Fase Awal: Merangsang pembentukan akar baru yang kuat dan perluasan tunas hijau (Vege awal).";
+  if (week <= 8) return "Fase Pertumbuhan: Mempertebal daun, batang lebih kokoh, dan memaksimalkan kapasitas fotosintesis (Vege lanjut).";
+  if (week <= 12) return "Fase Pembungaan: Memicu bakal bunga yang lebat dan mencegah kerontokan bunga (Generatif awal).";
+  return "Fase Pembuahan: Membesarkan ukuran buah, meningkatkan bobot panen, dan mempercepat pematangan buah (Generatif lanjut).";
+}
+
 // Fitur 2: Generate jadwal otomatis
 export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
   const schedules: ScheduleEntry[] = [];
@@ -34,24 +82,25 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
     const doseMod = isEco ? 0.7 : 1.0; // Hemat 30%
 
     if (w <= 4) {
-      kocorFert = ['DAP / Ultra DAP', 'NPK Grower'];
-      kocorDosis = [`${2 * doseMod} gr/L`, `${3 * doseMod} gr/L`];
-      semprotFert = ['Pupuk Daun Nitrogen'];
-      semprotDosis = [`${1.5 * doseMod} gr/L`];
+      kocorFert = ['NPK Mutiara 16-16-16', 'Urea'];
+      kocorDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `${(1 * doseMod).toFixed(1)} gr/L`];
+      semprotFert = ['Gandasil D / POC Daun'];
+      semprotDosis = [`${(1.5 * doseMod).toFixed(1)} gr/L`];
     } else if (w <= 8) {
-      kocorFert = ['NPK Grower', 'KNO3 Putih'];
-      kocorDosis = [`${3 * doseMod} gr/L`, `${1 * doseMod} gr/L`];
-      semprotFert = ['Pupuk Daun Mikro'];
-      semprotDosis = [`${1 * doseMod} gr/L`];
+      kocorFert = ['NPK Mutiara 16-16-16'];
+      kocorDosis = [`${(3 * doseMod).toFixed(1)} gr/L`];
+      semprotFert = ['Gandasil D / POC Daun'];
+      semprotDosis = [`${(1.5 * doseMod).toFixed(1)} gr/L`];
     } else if (w <= 12) {
-      kocorFert = ['MKP'];
-      kocorDosis = [`${3 * doseMod} gr/L`];
-      semprotFert = ['Boron'];
-      semprotDosis = [`${1 * doseMod} gr/L`];
+      kocorFert = ['SP-36 / TSP', 'KCl'];
+      kocorDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `${(1.5 * doseMod).toFixed(1)} gr/L`];
+      semprotFert = ['Gandasil B'];
+      semprotDosis = [`${(1.5 * doseMod).toFixed(1)} gr/L`];
     } else {
-      kocorFert = ['KNO3 Merah', 'NPK Kalium Tinggi'];
-      kocorDosis = [`${2 * doseMod} gr/L`, `${3 * doseMod} gr/L`];
-      // Tabur ZK omitted for simplicity, but could be added
+      kocorFert = ['NPK Mutiara 16-16-16', 'KCl'];
+      kocorDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `${(2 * doseMod).toFixed(1)} gr/L`];
+      semprotFert = ['Gandasil B / POC Buah'];
+      semprotDosis = [`${(1.5 * doseMod).toFixed(1)} gr/L`];
     }
 
     // kocor is typically early week (e.g., day 2 of week)
@@ -99,14 +148,14 @@ export function analyzeWithRuleEngine(symptoms: string[], conditions: string[]):
     disease = "Kekurangan Nitrogen";
     confidence = 85;
     recs = [{
-      jenis: "NPK Grower & KNO3 Putih", dosis: "1 sdm/pohon (kocor), 1 gr/L (semprot)", cara: "Kocor & Semprot", frekuensi: "1x seminggu"
+      jenis: "NPK 16-16-16 & Urea", dosis: "1 sdm/pohon (kocor), 1.5 gr/L (semprot)", cara: "Kocor & Semprot", frekuensi: "1x seminggu"
     }];
   } else if (sympStr.includes('bercak hitam') && condStr.includes('lembab')) {
     disease = "Penyakit Jamur (Antraknosa)";
     confidence = 90;
     severity = 'Sedang';
     recs = [{
-      jenis: "Fungisida Sistemik", dosis: "Sesuai kemasan", cara: "Semprot", frekuensi: "3 hari sekali"
+      jenis: "Fungisida Sistemik & Kontak", dosis: "Sesuai kemasan", cara: "Semprot", frekuensi: "3 hari sekali"
     }];
   } else if (sympStr.includes('keriting')) {
     disease = "Serangan Hama/Virus";
@@ -119,7 +168,7 @@ export function analyzeWithRuleEngine(symptoms: string[], conditions: string[]):
     disease = "Kekurangan Kalium";
     confidence = 75;
     recs = [{
-      jenis: "KNO3 Merah & ZK", dosis: "2 gr/L (kocor), 1 sdm (tabur)", cara: "Kocor & Tabur", frekuensi: "1x seminggu"
+      jenis: "NPK Mutiara 16-16-16 & KCl", dosis: "2 gr/L (kocor), 1 sdm (tabur)", cara: "Kocor & Tabur", frekuensi: "1x seminggu"
     }];
   }
 
