@@ -21,8 +21,13 @@ export default function Schedule() {
     return acc;
   }, {} as Record<number, typeof schedules>);
 
-  // Only show current week and next 3 weeks for simplicity
-  const displayWeeks = [weeks, weeks + 1, weeks + 2, weeks + 3].filter(w => w > 0);
+  // Determine which weeks to display
+  // Show the current week, and any weeks that have schedules >= current week.
+  // Actually, let's just show all completed weeks, current week, and all upcoming scheduled weeks.
+  const allScheduledWeeks = Object.keys(groupedSchedules).map(Number);
+  const displayWeeks = Array.from(new Set([weeks, ...allScheduledWeeks]))
+    .filter(w => w > 0)
+    .sort((a, b) => a - b);
 
   return (
     <div className="p-4 space-y-6 pb-24">
@@ -40,7 +45,10 @@ export default function Schedule() {
             </h3>
             
             {weekSchedules.length === 0 ? (
-              <p className="text-sm text-gray-500">Tidak ada jadwal</p>
+              <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 flex flex-col items-center justify-center text-center space-y-2">
+                <span className="text-gray-400 font-medium">Fase Istirahat / Penyerapan Alami</span>
+                <p className="text-xs text-gray-500">Tidak ada jadwal pemupukan atau penyemprotan pada minggu ini. Biarkan tanaman menyerap nutrisi dengan tenang.</p>
+              </div>
             ) : (
               weekSchedules.map(sched => {
                 const schedDate = new Date(sched.date);
