@@ -3,7 +3,7 @@ import { useFarm } from '../store/FarmContext';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { CheckCircle2, Circle } from 'lucide-react';
-import { getPlantAge, getNutrientContent, getExpectedResult, formatFertilizerName } from '../lib/farmLogic';
+import { getPlantAge, getNutrientContent, getExpectedResult, formatFertilizerName, getDominantNutrient } from '../lib/farmLogic';
 
 export default function Schedule() {
   const { schedules, activePlantId, markScheduleCompleted, plants } = useFarm();
@@ -95,6 +95,11 @@ export default function Schedule() {
                             <div className="text-xs text-green-700 font-medium space-y-0.5">
                                {Array.from(new Set(getNutrientContent(sched.fertilizers))).map(n => <div key={n}>• {n}</div>)}
                             </div>
+                          </div>
+
+                          <div className="bg-amber-50/50 p-3 rounded-xl border border-amber-100/50">
+                            <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-1">Kebutuhan Unsur Dominan</div>
+                            <p className="text-xs text-amber-700 font-medium leading-relaxed">{getDominantNutrient(sched.weekNumber)}</p>
                           </div>
 
                           <div className="bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">

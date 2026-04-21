@@ -58,6 +58,13 @@ export function getNutrientContent(fertilizers: string[]): string[] {
   });
 }
 
+export function getDominantNutrient(week: number): string {
+  if (week <= 4) return "Fase Vegetatif Awal: Dominan membutuhkan unsur Nitrogen (N) tinggi untuk memacu pertumbuhan sel, akar, batang, dan daun baru.";
+  if (week <= 8) return "Fase Vegetatif Lanjut: Membutuhkan Nitrogen (N) untuk hijau daun dan Fosfor (P) untuk mengokohkan batang sebelum masuk fase bunga.";
+  if (week <= 12) return "Fase Generatif Awal: Dominan membutuhkan Fosfor (P) tinggi untuk merangsang pembungaan yang lebat dan mencegah kerontokan.";
+  return "Fase Generatif Lanjut: Sangat dominan membutuhkan Kalium (K) tinggi untuk pembesaran, warna, bobot panen, dan kualitas buah.";
+}
+
 export function getExpectedResult(week: number): string {
   if (week <= 4) return "Fase Awal: Merangsang pembentukan akar baru yang kuat dan perluasan tunas hijau (Vege awal).";
   if (week <= 8) return "Fase Pertumbuhan: Mempertebal daun, batang lebih kokoh, dan memaksimalkan kapasitas fotosintesis (Vege lanjut).";
