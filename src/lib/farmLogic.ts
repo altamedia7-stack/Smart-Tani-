@@ -39,7 +39,8 @@ const NUTRIENT_MAP: Record<string, string> = {
   'Fungisida Mankozeb + Insek Imidakloprid': 'Proteksi: Jamur Tanah & Kutu (Vektor Virus)',
   'Insek Abamektin (Cegah Thrips/Keriting)': 'Proteksi: Thrips & Tungau Mites',
   'Fungisida Difenokonazol (Cegah Patek)': 'Proteksi: Jamur Antraknosa (Patek)',
-  'Insek Klorantraniliprol (Cegah Ulat)': 'Proteksi: Ulat Grayak & Penggerek Buah'
+  'Insek Klorantraniliprol (Cegah Ulat)': 'Proteksi: Ulat Grayak & Penggerek Buah',
+  'ZA (Amonium Sulfat)': 'N: 21%, S: 24%'
 };
 
 export function formatFertilizerName(f: string): string {
@@ -139,10 +140,25 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
   // Soil properties
   const isSandy = plant.soilType === 'Berpasir (Porous)';
   const isGambut = plant.soilType === 'Gambut (Asam)';
+  const isLiat = plant.soilType === 'Liat / Lempung (Padat)';
+  const isKapur = plant.soilType === 'Tanah Kapur (Basa / pH Tinggi)';
+  const isVulkanik = plant.soilType === 'Vulkanik (Andosol / Pegunungan)';
   
-  // Kocor frequency: Sandy soil needs more frequent watering but lower doses
-  const kocorIntervalDays = isSandy ? 4 : 7;
-  const doseMultiplier = isSandy ? 0.6 : 1.0; 
+  // Kocor frequency & dosage logic based on soil
+  let kocorIntervalDays = 7;
+  let doseMultiplier = 1.0;
+
+  if (isSandy) {
+    kocorIntervalDays = 4; // Lebih sering karena mudah lolos air
+    doseMultiplier = 0.6;  // Dosis dikurangi (spoon feeding)
+  } else if (isLiat) {
+    kocorIntervalDays = 10; // Mengikat air kuat, kurangi frekuensi kocor
+    doseMultiplier = 1.2;   // Akar sulit tembus, berikan dosis sedikit lebih tinggi agar terjangkau
+  } else if (isVulkanik) {
+    doseMultiplier = 1.0;   // Normal tapi sangat subur
+  } else if (isKapur) {
+    doseMultiplier = 1.1;   // Tambah sedikit karena pH basa mengikat Phospat
+  }
   
   // Generate for 16 weeks (example lifecycle)
   for (let w = 1; w <= 16; w++) {
@@ -156,13 +172,27 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
     let semprotDosis: string[] = [];
 
     if (w <= 4) {
-      kocorFert = ['YaraMila 16-16-16', isGambut ? 'Kalsium Nitrat (Calcinit)' : 'Ultradap'];
+      // Logic modifikasi pupuk berdasarkan tanah
+      let pSource = 'Ultradap';
+      let nSource = 'YaraMila 16-16-16';
+      
+      if (isGambut) pSource = 'Kalsium Nitrat (Calcinit)'; // Butuh pH buffer
+      if (isKapur) {
+        pSource = 'Ultradap'; // Butuh P tinggi karena P terikat di tanah kapur
+        nSource = 'ZA (Amonium Sulfat)'; // Asamkan sedikit area perakaran
+      }
+
+      kocorFert = [nSource, pSource];
       kocorDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `${(1 * doseMod).toFixed(1)} gr/L`];
       semprotFert = ['Meroke Provit Hijau', 'Chelated Trace Elements (Micro)', 'Fungisida Mankozeb + Insek Imidakloprid'];
       semprotDosis = [`${(1.5 * doseMod).toFixed(1)} gr/L`, `${(0.5 * doseMod).toFixed(1)} gr/L`, `Sesuai Kemasan`];
     } else if (w <= 8) {
       kocorFert = ['YaraMila 16-16-16'];
+      if (isKapur) kocorFert.push('ZA (Amonium Sulfat)');
+      
       kocorDosis = [`${(3 * doseMod).toFixed(1)} gr/L`];
+      if (isKapur) kocorDosis.push(`${(1 * doseMod).toFixed(1)} gr/L`);
+
       semprotFert = ['Meroke Provit Hijau', 'Insek Abamektin (Cegah Thrips/Keriting)'];
       semprotDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `Sesuai Kemasan`];
     } else if (w <= 12) {
@@ -177,8 +207,15 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
       semprotDosis = [`${(2 * doseMod).toFixed(1)} gr/L`, `Sesuai Kemasan`];
     }
 
-    // kocor
-    const kocorDate = addDays(start, (w - 1) * 7 + 2);
+    // kocor based on interval
+    // If it's clay (10 days), we might skip some weeks or shift days, but for simplicity of weekly loops:
+    // We'll place it on day 2. If it's clay, maybe we only Kocor every 1.5 weeks. 
+    // To keep the data model simple, we will adjust the date using the dynamic interval
+    let kocorDate = addDays(start, Math.floor((w - 1) * 7 * (kocorIntervalDays / 7)) + 2);
+    
+    // Only add Kocor if it falls roughly within this week (to avoid duplicates or skipping too much in a simple loop)
+    // For a real app we'd generate a flat list of dates, but let's stick to the weekly bucket structure.
+    
     schedules.push({
       id: generateId(),
       plantId: plant.id,
@@ -205,7 +242,7 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
       });
     }
 
-    // semprot 
+    // semprot (Foliar is less affected by soil type, but we adjust day slightly if watering changes)
     const semprotDate = addDays(start, (w - 1) * 7 + (isSandy ? 4 : 5));
     schedules.push({
       id: generateId(),

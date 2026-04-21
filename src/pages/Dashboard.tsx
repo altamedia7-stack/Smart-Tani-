@@ -52,6 +52,8 @@ export default function Dashboard() {
                   <option value="Liat / Lempung (Padat)">Liat / Lempung (Padat)</option>
                   <option value="Berpasir (Porous)">Berpasir (Porous)</option>
                   <option value="Gambut (Asam)">Gambut (Asam)</option>
+                  <option value="Tanah Kapur (Basa / pH Tinggi)">Tanah Kapur (Basa / pH Tinggi)</option>
+                  <option value="Vulkanik (Andosol / Pegunungan)">Vulkanik (Andosol / Pegunungan)</option>
                 </select>
               </div>
               <div className="space-y-2">
