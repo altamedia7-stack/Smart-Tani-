@@ -93,6 +93,10 @@ export default function Dashboard() {
                     <option value="Kopi">Kopi</option>
                     <option value="Kakao">Kakao</option>
                   </optgroup>
+
+                  <optgroup label="🌵 Kaktus & Buah Eksotis">
+                    <option value="Buah Naga">Buah Naga</option>
+                  </optgroup>
                 </select>
               </div>
               <div className="space-y-2">

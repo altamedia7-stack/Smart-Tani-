@@ -5,6 +5,7 @@ import Schedule from './pages/Schedule';
 import Scanner from './pages/Scanner';
 import History from './pages/History';
 import SettingsPage from './pages/Settings';
+import { InstallPWA } from './components/InstallPWA';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -39,8 +40,11 @@ export default function App() {
             <h1 className="text-xl font-bold tracking-tight text-gray-900">Smart Pupuk Tani<span className="text-green-600"> AI</span></h1>
             <p className="text-gray-500 text-xs">Konsultan Cerdas Petani</p>
           </div>
-          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-            <span className="text-green-700 text-xs font-bold">PT</span>
+          <div className="flex items-center gap-2">
+            <InstallPWA />
+            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+              <span className="text-green-700 text-xs font-bold">PT</span>
+            </div>
           </div>
         </header>
 

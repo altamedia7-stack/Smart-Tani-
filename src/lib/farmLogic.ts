@@ -107,6 +107,7 @@ export function getPlantCategory(name: string): string {
   if (['Kelapa Sawit', 'Kopi', 'Kakao'].includes(name)) return 'Tanaman Industri';
   if (['Padi', 'Jagung'].includes(name)) return 'Pangan';
   if (name === 'Pepaya') return 'Pepaya';
+  if (name === 'Buah Naga') return 'Buah Naga';
   if (['Sawi / Pakcoy', 'Bayam', 'Kangkung', 'Selada / Lettuce', 'Kubis / Kol'].includes(name)) return 'Sayuran Daun';
   if (['Bawang Merah', 'Bawang Putih', 'Kentang', 'Wortel', 'Singkong', 'Ubi Jalar'].includes(name)) return 'Umbi';
   if (['Kacang Panjang', 'Buncis', 'Kedelai', 'Kacang Tanah', 'Edamame'].includes(name)) return 'Legum';
@@ -134,6 +135,24 @@ export function getDominantNutrient(week: number, plantName: string = 'Cabai'): 
     };
   }
   
+  if (cat === 'Buah Naga') {
+    if (week <= 12) return {
+      title: "Fase Pertumbuhan Sulur & Perakaran",
+      explanation: "Membutuhkan NPK seimbang + Magnesium. Sulur naga bertindak sebagai daun untuk fotosintesis. Kekurangan hara akan membuat sulur menguning, pipih, dan kerdil.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Karena akarnya serabut menempel di tiang dan dangkal di permukaan tanah, pemupukan tidak boleh di-tugal ke dalam tanah lurus. Penuhi pangkal dengan kompos/kohe tinggi. Jaga agar pangkal tidak tergenang agar terhindar dari Busuk Pangkal Batang."
+    };
+    if (week <= 32) return {
+      title: "Fase Pendewasaan Sulur (Stop Nitrogen)",
+      explanation: "Genjot Fosfat (MKP/SP-36) untuk mematangkan sulur agar siap berbunga. Hentikan Nitrogen berlebih yang hanya akan memicu tunas air (sulur muda) melulu keluar.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Sulur yang siap berbunga bentuknya membulat tebal, berduri kaku, dan berwarna hijau tua kelabu. Rutinkan penyemprotan Fungisida (Mankozeb / Tembaga) karena fase memanjang ini paling rentan terserang Cacar Batang (Antraknosa)."
+    };
+    return {
+      title: "Fase Pembungaan & Pengisian Buah",
+      explanation: "Fokus pada Kalium (KNO3 Putih) dan Kalsium-Boron. Kalium memperbesar size dan memaniskan buah, Boron menahan bunga agar tidak gampang rontok sebelum mekar sempurna.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Bunga naga mekar tengah malam. Di luar musim (off-season), petani memacu hormon florigen dengan teknik pencahayaan lampu (fotoperiodisme) di sela tiang pada malam hari agar bunga tetap tembus keluar."
+    };
+  }
+
   if (cat === 'Pohon Buah') {
     if (week <= 12) return {
       title: "Fase Vegetatif Pembentukan Pola Tajuk",
@@ -264,6 +283,12 @@ export function getExpectedResult(week: number, soilType: string = 'Normal', pla
     return `Kemanisan pepaya (Brix) meningkat drastis, daging tebal berwarna merah menyala, padat, dan rongga biji mengecil.`;
   }
   
+  if (cat === 'Buah Naga') {
+    if (week <= 12) return `Sulur tumbuh tebal, mengkilap, berduri sehat, dan memanjat tiang panjatan dengan cengkeraman akar udara yang kuat di media ${soilType}.`;
+    if (week <= 32) return `Sulur mencapai ban/tajuk atas dan menjuntai ke bawah. Ujung sulur berhenti memanjang dan mulai mematangkan diri (tua).`;
+    return `Kuncup bunga besar bermunculan serempak di lekukan duri. Buah yang dipanen berukuran super, bersisik segar, dan daging buah padat berair manis.`;
+  }
+
   if (cat === 'Pohon Buah') {
     if (week <= 12) return `Perakaran mendalam di tanah ${soilType}, terhindar dari busuk akar Phytophthora. Trubus bermunculan lebat memutar.`;
     if (week <= 24) return `Batang utama melebar dan rimbun, percabangan lateral mulai kuat menyangga struktur tajuk.`;
@@ -398,6 +423,40 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
         taburDosis = ['400 gr / pohon', '100 gr / pohon'];
         semprotFert = ['Meroke Provit Merah', 'Insek Klorantraniliprol'];
         semprotDosis = ['2 gr/L', 'Sesuai Kemasan'];
+      }
+
+      const date = addDays(start, w * 7);
+      schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Tabur', fertilizers: taburFert, dosages: taburDosis, isCompleted: false });
+      
+      const semprotDate = addDays(start, w * 7 + 3);
+      schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
+    }
+    return schedules;
+  }
+
+  if (cat === 'Buah Naga') {
+    // Generate schedule roughly every 4 weeks up to 48 weeks
+    for (let w = 4; w <= 48; w += 4) {
+      let taburFert: string[] = [];
+      let taburDosis: string[] = [];
+      let semprotFert: string[] = [];
+      let semprotDosis: string[] = [];
+
+      if (w <= 16) {
+        taburFert = ['YaraMila 16-16-16', 'Pupuk Kandang (Fermentasi)'];
+        taburDosis = ['100 gr / tiang', '5 kg / tiang'];
+        semprotFert = ['Meroke Provit Hijau', 'Fungisida Mankozeb'];
+        semprotDosis = ['2 gr/L', '2 gr/L'];
+      } else if (w <= 32) {
+        taburFert = ['SP-36', 'YaraMila Winner (15-9-20)'];
+        taburDosis = ['200 gr / tiang', '150 gr / tiang'];
+        semprotFert = ['MKP (Pemurni Batang)', 'Fungisida Tembaga Oksida'];
+        semprotDosis = ['3 gr/L', '1.5 gr/L'];
+      } else { // Fruiting phase
+        taburFert = ['KNO3 Putih', 'Dolomit / Kalsium'];
+        taburDosis = ['150 gr / tiang', '100 gr / tiang'];
+        semprotFert = ['Kalsium + Boron Folier', 'Fungisida Difenokonazol'];
+        semprotDosis = ['2 ml/L', 'Sesuai Kemasan'];
       }
 
       const date = addDays(start, w * 7);
