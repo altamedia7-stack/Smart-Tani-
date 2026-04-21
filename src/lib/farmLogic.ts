@@ -102,14 +102,33 @@ export function getNPKRatio(fertilizers: string[]): { n: number; p: number; k: n
   return { n, p, k, target };
 }
 
-export function getPlantCategory(name: string): 'Hortikultura' | 'Pohon Buah' | 'Pangan' {
+export function getPlantCategory(name: string): 'Hortikultura' | 'Pohon Buah' | 'Pangan' | 'Pepaya' {
   if (['Durian', 'Alpukat', 'Jeruk'].includes(name)) return 'Pohon Buah';
   if (['Padi', 'Jagung'].includes(name)) return 'Pangan';
+  if (name === 'Pepaya') return 'Pepaya';
   return 'Hortikultura';
 }
 
 export function getDominantNutrient(week: number, plantName: string = 'Cabai'): { title: string, explanation: string, comparison: string } {
   const cat = getPlantCategory(plantName);
+  
+  if (cat === 'Pepaya') {
+    if (week <= 8) return {
+      title: "Fase Pertumbuhan Batang Vigor",
+      explanation: "Pepaya rakus Nitrogen (YaraMila) & Kalsium (Calcinit) di fase ini. Tanpa kalsium yang cukup, batang pepaya yang berongga akan lunak dan mudah patah saat terkena angin/penyakit Busuk Akar Phytophthora.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Jangan pelit Pupuk Kandang dan Dolomit. Pepaya sangat sensitif terhadap keasaman tanah (pH rendah). Selalu buat guludan/bedengan tinggi agar pangkal batang tidak terendam air."
+    };
+    if (week <= 20) return {
+      title: "Fase Mulai Berbunga & Seleksi",
+      explanation: "Fosfat tinggi (MKP/Ultradap) wajib masuk. Jika nutrisi lengkap, dari 1 ketiak daun akan keluar banyak bunga. Lakukan seleksi bunga jantan/hermafrodit.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Bunga pepaya ekstrim rontoknya jika cuaca terlalu panas atau kekurangan Boron. Selprotkan asam amino + Boron untuk mengunci bunga agar terus lengket menjadi pentil."
+    };
+    return {
+      title: "Fase Panen Estafet (Terus Menerus)",
+      explanation: "Fase unik Pepaya: Ia butuh NPK seimbang + ekstra Kalium (KNO3 Putih) setiap 2 minggu. Bagian bawah membesarkan buah, bagian atas terus memproduksi bunga baru.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Tanaman ini ibarat 'Pabrik Berjalan'. Kurangnya Kalium membuat pepaya bentuknya memanjang tumpul, rasanya hambar, dan dagingnya gembos (terdapat rongga kosong besar di tengah buah)."
+    };
+  }
   
   if (cat === 'Pohon Buah') {
     if (week <= 12) return {
@@ -178,6 +197,12 @@ export function getDominantNutrient(week: number, plantName: string = 'Cabai'): 
 export function getExpectedResult(week: number, soilType: string = 'Normal', plantName: string = 'Cabai'): string {
   const cat = getPlantCategory(plantName);
   
+  if (cat === 'Pepaya') {
+    if (week <= 8) return `Menciptakan pondasi batang bawah yang besar seperti gajah, rimbun, dan tidak mudah roboh di tanah ${soilType}.`;
+    if (week <= 20) return `Vigor bunga hermafrodit (sempurna) dominan, pentil buah bergelantungan rapat di setiap ruas tanpa jeda.`;
+    return `Kemanisan pepaya (Brix) meningkat drastis, daging tebal berwarna merah menyala, padat, dan rongga biji mengecil.`;
+  }
+  
   if (cat === 'Pohon Buah') {
     if (week <= 12) return `Perakaran mendalam di tanah ${soilType}, terhindar dari busuk akar Phytophthora. Trubus bermunculan lebat memutar.`;
     if (week <= 24) return `Batang utama melebar dan rimbun, percabangan lateral mulai kuat menyangga struktur tajuk.`;
@@ -227,6 +252,41 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
   }
   
   const cat = getPlantCategory(plant.name);
+
+  if (cat === 'Pepaya') {
+    // Generate schedule every 2 weeks up to week 48
+    for (let w = 2; w <= 48; w += 2) {
+      let taburFert: string[] = [];
+      let taburDosis: string[] = [];
+      let semprotFert: string[] = [];
+      let semprotDosis: string[] = [];
+
+      if (w <= 8) {
+        taburFert = ['YaraMila 16-16-16', 'Kalsium Nitrat (Calcinit)'];
+        taburDosis = ['20 gr / phn', '10 gr / phn'];
+        semprotFert = ['Meroke Provit Hijau', 'Fungisida Mankozeb + Insek Imidakloprid'];
+        semprotDosis = ['2 gr/L', 'Sesuai Kemasan'];
+      } else if (w <= 20) {
+        taburFert = ['YaraMila Winner (15-9-20)', 'MKP'];
+        taburDosis = ['30 gr / phn', '15 gr / phn'];
+        semprotFert = ['Boron', 'Insek Abamektin (Cegah Thrips/Keriting)'];
+        semprotDosis = ['1 gr/L', 'Sesuai Kemasan'];
+      } else {
+        // Continuous fruiting
+        taburFert = ['YaraMila Winner (15-9-20)', 'KNO3 Putih'];
+        taburDosis = ['40 gr / phn', '20 gr / phn'];
+        semprotFert = ['Meroke Provit Merah', 'Fungisida Difenokonazol (Cegah Patek)'];
+        semprotDosis = ['2 gr/L', 'Sesuai Kemasan'];
+      }
+
+      const date = addDays(start, w * 7);
+      schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Tabur', fertilizers: taburFert, dosages: taburDosis, isCompleted: false });
+      
+      const semprotDate = addDays(start, w * 7 + 3);
+      schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
+    }
+    return schedules;
+  }
 
   if (cat === 'Pohon Buah') {
     // Generate schedule every month (every 4 weeks) for 1 year (48 weeks)
