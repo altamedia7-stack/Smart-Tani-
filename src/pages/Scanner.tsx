@@ -44,7 +44,7 @@ export default function Scanner() {
       
       let res;
       try {
-        res = await analyzePlantAI(image, sympList, condList, historyInfo, currentSoilType);
+        res = await analyzePlantAI(image, sympList, condList, historyInfo, currentSoilType, activePlant?.name);
       } catch (e) {
         console.warn("AI failed, falling back to rule engine", e);
         res = analyzeWithRuleEngine(sympList, condList);

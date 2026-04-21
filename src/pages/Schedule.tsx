@@ -128,17 +128,17 @@ export default function Schedule() {
                           <div className="bg-amber-50/80 p-3 rounded-xl border border-amber-200/60 shadow-sm">
                             <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-2">Kebutuhan Unsur Dominan & Edukasi</div>
                             <div className="space-y-2">
-                              <p className="text-xs text-amber-900 font-bold">{getDominantNutrient(sched.weekNumber).title}</p>
-                              <p className="text-xs text-amber-800 font-medium leading-relaxed">{getDominantNutrient(sched.weekNumber).explanation}</p>
+                              <p className="text-xs text-amber-900 font-bold">{getDominantNutrient(sched.weekNumber, plant.name).title}</p>
+                              <p className="text-xs text-amber-800 font-medium leading-relaxed">{getDominantNutrient(sched.weekNumber, plant.name).explanation}</p>
                               <div className="bg-amber-100/70 p-2 rounded-lg text-[11px] text-amber-900 leading-relaxed font-semibold">
-                                {getDominantNutrient(sched.weekNumber).comparison}
+                                {getDominantNutrient(sched.weekNumber, plant.name).comparison}
                               </div>
                             </div>
                           </div>
 
                           <div className="bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
                             <div className="text-[11px] font-bold text-blue-800 uppercase tracking-wider mb-1">Target Hasil</div>
-                            <p className="text-xs text-blue-700 font-medium leading-relaxed">{getExpectedResult(sched.weekNumber, plant.soilType || 'Normal')}</p>
+                            <p className="text-xs text-blue-700 font-medium leading-relaxed">{getExpectedResult(sched.weekNumber, plant.soilType || 'Normal', plant.name)}</p>
                           </div>
 
                         </div>

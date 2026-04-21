@@ -6,7 +6,8 @@ export async function analyzePlantAI(
   symptoms: string[], 
   conditions: string[], 
   historyInfo: string,
-  soilType?: string
+  soilType?: string,
+  plantName?: string
 ): Promise<DiagnosisResult> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("Gemini API Key is missing");
@@ -14,12 +15,13 @@ export async function analyzePlantAI(
   const ai = new GoogleGenAI({ apiKey });
   
   const soilContext = soilType ? `\nJenis Tanah: ${soilType}` : '';
+  const plantContext = plantName ? `\nJenis Tanaman yang Sedang Ditangani: ${plantName}` : '';
 
   const prompt = `
 Anda adalah konsultan agronomi profesional tingkat dunia.
 Berdasarkan data berikut (dan gambar jika ada):
 Gejala: ${symptoms.join(', ')}
-Kondisi Lingkungan: ${conditions.join(', ')}${soilContext}
+Kondisi Lingkungan: ${conditions.join(', ')}${soilContext}${plantContext}
 Riwayat: ${historyInfo}
 
 Lakukan analisa mendalam. Hitung probabilitas masalah menggunakan sistem skoring berdasarkan input pengguna dan aturan agronomi.

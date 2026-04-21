@@ -102,7 +102,57 @@ export function getNPKRatio(fertilizers: string[]): { n: number; p: number; k: n
   return { n, p, k, target };
 }
 
-export function getDominantNutrient(week: number): { title: string, explanation: string, comparison: string } {
+export function getPlantCategory(name: string): 'Hortikultura' | 'Pohon Buah' | 'Pangan' {
+  if (['Durian', 'Alpukat', 'Jeruk'].includes(name)) return 'Pohon Buah';
+  if (['Padi', 'Jagung'].includes(name)) return 'Pangan';
+  return 'Hortikultura';
+}
+
+export function getDominantNutrient(week: number, plantName: string = 'Cabai'): { title: string, explanation: string, comparison: string } {
+  const cat = getPlantCategory(plantName);
+  
+  if (cat === 'Pohon Buah') {
+    if (week <= 12) return {
+      title: "Fase Vegetatif Pembentukan Pola Tajuk",
+      explanation: "Pohon seperti Durian butuh Nitrogen (N) tinggi via NPK dan pupuk kandang matang. Akar tunjang sedang turun menembus lapisan keras.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Pemupukan pohon buah muda jangan pakai KCL dulu, klorida membuat pucuk daun terbakar. Pakailah NPK 16-16-16 tabur di ujung kanopi tajuk, bukan di pangkal batang!"
+    };
+    if (week <= 24) return {
+      title: "Fase Pendewasaan Batang & Percabangan",
+      explanation: "Rasio P mulai penting untuk lignifikasi (pengerasa batang).",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Batang yang keras menghindari pecah batang. Tambahkan Kalsium (Dolomit) setiap 3 bulan."
+    };
+    if (week <= 36) return {
+      title: "Fase Stressing / Pembungaan",
+      explanation: "Hentikan N total, gunakan MKP dan KNO3 dosis tinggi disiram di sekitar perakaran untuk memacu bunga keluar di dahan sekunder.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Jika pohon keluar sirung air (tunas baru), bunga akan rontok karena kompetisi energi. Berhenti mengairi untuk memberi 'stressing' air."
+    };
+    return {
+      title: "Fase Pembesaran Buah & Kualitas Rasa",
+      explanation: "Kalium Tinggi dan Trace Elements. Cth: NPK Grower pembesar buah.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Untuk Durian/Alpukat, kekurangan Boron membuat buah bengkok atau berongga. Kalium tinggi dan Sulfate (dari ZA) menjamin rasa buah berkarakter tegas (manis/pahit)."
+    };
+  }
+
+  if (cat === 'Pangan') {
+    if (week <= 3) return {
+      title: "Fase Pembentukan Anakan / V-Phase",
+      explanation: "Fokus pada Nitrogen (Urea) tinggi untuk mengejar jumlah anakan per rumpun (padi) / lebar daun (jagung).",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Pemupukan pertama Padi maks di umur 12 HST agar primordia (bakal bulir) banyak yang jadi."
+    };
+    if (week <= 7) return {
+      title: "Fase Bunting / Taselling",
+      explanation: "Puncak kebutuhan Kalium (KCl) agar batang tak rebah dan bulir akan penuh nantinya.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Di umur 40-45 HST, Padi butuh KCL. Banyak petani hanya memberi SP/Urea, sehingga saat padi berbulir, leher malai lemes dan mudah patah kena angin."
+    };
+    return {
+      title: "Fase Pengisian Bulir",
+      explanation: "Cuaca panas dan air cukuP. Tidak perlu pupuk tabur lagi, bisa semprot KNO3 daun.",
+      comparison: "💡 Ilmu Agronomi Lanjutan: Hentikan Urea mutlak. Daun terlalu hijau di fase ini hanya menjadi sarang empuk bagi Wereng dan Walang Sangit."
+    };
+  }
+
+  // Hortikultura
   if (week <= 4) return {
     title: "Fase Vegetatif Awal (Akar & Tunas)",
     explanation: "Sangat membutuhkan Fosfat (P) tinggi (cth: Ultradap / Calcinit) untuk memperpanjang akar dan mencegah stres pindah tanam, ditambah Nitrogen (N) untuk memacu keluarnya daun baru.",
@@ -125,7 +175,23 @@ export function getDominantNutrient(week: number): { title: string, explanation:
   };
 }
 
-export function getExpectedResult(week: number, soilType: string = 'Normal'): string {
+export function getExpectedResult(week: number, soilType: string = 'Normal', plantName: string = 'Cabai'): string {
+  const cat = getPlantCategory(plantName);
+  
+  if (cat === 'Pohon Buah') {
+    if (week <= 12) return `Perakaran mendalam di tanah ${soilType}, terhindar dari busuk akar Phytophthora. Trubus bermunculan lebat memutar.`;
+    if (week <= 24) return `Batang utama melebar dan rimbun, percabangan lateral mulai kuat menyangga struktur tajuk.`;
+    if (week <= 36) return `Bakal bunga muncul di batang/dahan sekunder serempak akibat lonjakan nisbah rasio C/N yang optimal.`;
+    return `Buah padat berisi, bentuk simetris sempurna, dan peningkatan intensitas warna, tekstur, serta rasa yang tajam.`;
+  }
+  
+  if (cat === 'Pangan') {
+    if (week <= 3) return `Anakan lebat, daun bendera berkembang optimal untuk menopang produksi karbohidrat.`;
+    if (week <= 7) return `Mencegah kerebahan dan kegagalan primordia bulir, tangkai malai menjadi tangguh.`;
+    return `Pengisian butir/bulir hingga pangkal (bernaz) dengan efektivitas pengurasan asimilat dari daun ke biji mentok 100%.`;
+  }
+
+  // Hortikultura
   if (week <= 4) return `Fase Awal: Ultradap/Calcinit & YaraMila merangsang perakaran kuat serta tunas hijau. Penyerapan dioptimalkan untuk kondisi tanah ${soilType} guna menghindari defisiensi dini.`;
   if (week <= 8) return `Fase Pertumbuhan: Mempertebal daun dan dinding sel batang secara maksimal. Hara seimbang dan Trace Elements memastikan kapasitas fotosintesis puncak tanpa gejala klorosis.`;
   if (week <= 12) return "Fase Pembungaan: MKP dan KNO3 Putih bekerja sinergis mencetak jumlah bakal bunga terbanyak (super blossom) dan Boron mengunci bunga agar anti-rontok.";
@@ -149,18 +215,85 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
   let doseMultiplier = 1.0;
 
   if (isSandy) {
-    kocorIntervalDays = 4; // Lebih sering karena mudah lolos air
-    doseMultiplier = 0.6;  // Dosis dikurangi (spoon feeding)
+    kocorIntervalDays = 4;
+    doseMultiplier = 0.6;
   } else if (isLiat) {
-    kocorIntervalDays = 10; // Mengikat air kuat, kurangi frekuensi kocor
-    doseMultiplier = 1.2;   // Akar sulit tembus, berikan dosis sedikit lebih tinggi agar terjangkau
+    kocorIntervalDays = 10;
+    doseMultiplier = 1.2;
   } else if (isVulkanik) {
-    doseMultiplier = 1.0;   // Normal tapi sangat subur
+    doseMultiplier = 1.0;
   } else if (isKapur) {
-    doseMultiplier = 1.1;   // Tambah sedikit karena pH basa mengikat Phospat
+    doseMultiplier = 1.1;
   }
   
-  // Generate for 16 weeks (example lifecycle)
+  const cat = getPlantCategory(plant.name);
+
+  if (cat === 'Pohon Buah') {
+    // Generate schedule every month (every 4 weeks) for 1 year (48 weeks)
+    for (let w = 4; w <= 48; w += 4) {
+      let taburFert: string[] = [];
+      let taburDosis: string[] = [];
+      let semprotFert: string[] = [];
+      let semprotDosis: string[] = [];
+
+      if (w <= 12) {
+        taburFert = ['YaraMila 16-16-16', 'Pupuk Kandang (Fermentasi)'];
+        taburDosis = ['250 gr / pohon', '10 kg / pohon'];
+        semprotFert = ['Fungisida Mankozeb', 'Insek Imidakloprid'];
+        semprotDosis = ['2 gr/L', '1 ml/L'];
+      } else if (w <= 24) {
+        taburFert = ['YaraMila 16-16-16', 'SP-36'];
+        taburDosis = ['300 gr / pohon', '100 gr / pohon'];
+        semprotFert = ['Meroke Provit Hijau'];
+        semprotDosis = ['2 gr/L'];
+      } else if (w <= 36) {
+        taburFert = ['MKP', 'KNO3 Putih']; // Stop Nitrogen
+        taburDosis = ['200 gr / pohon', '200 gr / pohon'];
+        semprotFert = ['Boron', 'Fungisida Difenokonazol (Cegah Patek)'];
+        semprotDosis = ['1 gr/L', 'Sesuai Kemasan'];
+      } else {
+        taburFert = ['YaraMila Winner (15-9-20)', 'ZA (Amonium Sulfat)'];
+        taburDosis = ['400 gr / pohon', '100 gr / pohon'];
+        semprotFert = ['Meroke Provit Merah', 'Insek Klorantraniliprol'];
+        semprotDosis = ['2 gr/L', 'Sesuai Kemasan'];
+      }
+
+      const date = addDays(start, w * 7);
+      schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Tabur', fertilizers: taburFert, dosages: taburDosis, isCompleted: false });
+      
+      const semprotDate = addDays(start, w * 7 + 3);
+      schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
+    }
+    return schedules;
+  }
+
+  if (cat === 'Pangan') {
+    // Generate schedule roughly at week 2, 4, 6 (approx 14, 28, 42 days)
+    const panganScheds = [
+      { w: 2, fert: ['Urea', 'SP-36'], dosis: ['100 kg/Ha', '50 kg/Ha'] },
+      { w: 4, fert: ['Urea', 'NPK Phonska'], dosis: ['75 kg/Ha', '100 kg/Ha'] },
+      { w: 7, fert: ['KCl', 'Urea'], dosis: ['50 kg/Ha', '50 kg/Ha'] },
+      { w: 10, fert: ['KNO3 Putih (Foliar)'], dosis: ['3 gr/L (Semprot)'] },
+    ];
+
+    panganScheds.forEach(ps => {
+      const date = addDays(start, ps.w * 7);
+      const isSemprot = ps.fert[0].includes('Foliar');
+      schedules.push({
+        id: generateId(),
+        plantId: plant.id,
+        date: date.toISOString(),
+        weekNumber: ps.w,
+        type: isSemprot ? 'Semprot' : 'Tabur',
+        fertilizers: ps.fert,
+        dosages: ps.dosis,
+        isCompleted: false
+      });
+    });
+    return schedules;
+  }
+
+  // Generate for 16 weeks (Hortikultura lifecycle)
   for (let w = 1; w <= 16; w++) {
     const isEco = plant.economyMode;
     const doseMod = isEco ? 0.7 * doseMultiplier : 1.0 * doseMultiplier;

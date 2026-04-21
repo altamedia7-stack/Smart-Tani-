@@ -37,8 +37,25 @@ export default function Dashboard() {
           <CardContent className="pt-6">
             <form onSubmit={handleAddPlant} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="name">Nama Tanaman</Label>
-                <Input id="name" placeholder="Cth: Cabai Rawit (Blok A)" required />
+                <Label htmlFor="name">Jenis Tanaman</Label>
+                <select id="name" name="name" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" required>
+                  <option value="">Pilih Tanaman...</option>
+                  <optgroup label="Hortikultura (Sayur & Semusim)">
+                    <option value="Cabai">Cabai</option>
+                    <option value="Tomat">Tomat</option>
+                    <option value="Melon / Semangka">Melon / Semangka</option>
+                    <option value="Bawang Merah">Bawang Merah</option>
+                  </optgroup>
+                  <optgroup label="Tumbuhan Keras / Buah (Perkebunan)">
+                    <option value="Durian">Durian</option>
+                    <option value="Alpukat">Alpukat</option>
+                    <option value="Jeruk">Jeruk</option>
+                  </optgroup>
+                  <optgroup label="Tanaman Pangan">
+                    <option value="Padi">Padi</option>
+                    <option value="Jagung">Jagung</option>
+                  </optgroup>
+                </select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="plantingDate">Tanggal Tanam</Label>
