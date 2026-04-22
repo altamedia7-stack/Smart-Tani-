@@ -362,13 +362,18 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
 
   if (cat === 'Pepaya') {
     // Generate schedule every 2 weeks up to week 48
-    for (let w = 2; w <= 48; w += 2) {
+    for (let w = 1; w <= 48; w += 2) {
       let taburFert: string[] = [];
       let taburDosis: string[] = [];
       let semprotFert: string[] = [];
       let semprotDosis: string[] = [];
 
-      if (w <= 8) {
+      if (w === 1) {
+        taburFert = ['Pupuk Kandang (Fermentasi)', 'Dolomit'];
+        taburDosis = ['2 kg / lubang tanam', '200 gr / lubang tanam'];
+        semprotFert = ['Asam Amino / Decomposer', 'Asam Humat'];
+        semprotDosis = ['2 ml/L', '1 gr/L'];
+      } else if (w <= 8) {
         taburFert = ['YaraMila 16-16-16', 'Kalsium Nitrat (Calcinit)'];
         taburDosis = ['20 gr / phn', '10 gr / phn'];
         semprotFert = ['Meroke Provit Hijau', 'Fungisida Mankozeb + Insek Imidakloprid'];
@@ -386,10 +391,10 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
         semprotDosis = ['2 gr/L', 'Sesuai Kemasan'];
       }
 
-      const date = addDays(start, w * 7);
+      const date = addDays(start, (w - 1) * 7 + 2);
       schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Tabur', fertilizers: taburFert, dosages: taburDosis, isCompleted: false });
       
-      const semprotDate = addDays(start, w * 7 + 3);
+      const semprotDate = addDays(start, (w - 1) * 7 + 5);
       schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
     }
     return schedules;
@@ -397,13 +402,18 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
 
   if (cat === 'Pohon Buah') {
     // Generate schedule every month (every 4 weeks) for 1 year (48 weeks)
-    for (let w = 4; w <= 48; w += 4) {
+    for (let w = 1; w <= 48; w += 4) {
       let taburFert: string[] = [];
       let taburDosis: string[] = [];
       let semprotFert: string[] = [];
       let semprotDosis: string[] = [];
 
-      if (w <= 12) {
+      if (w === 1) {
+        taburFert = ['Pupuk Dasar (Kohe Fermentasi)', 'Asam Humat'];
+        taburDosis = ['10-20 kg / lubang', '20 gr/lubang'];
+        semprotFert = ['Vitamin B1 Tanaman (Anti Stress)', 'Insek Abamektin'];
+        semprotDosis = ['1 ml/L', '0.5 ml/L'];
+      } else if (w <= 12) {
         taburFert = ['YaraMila 16-16-16', 'Pupuk Kandang (Fermentasi)'];
         taburDosis = ['250 gr / pohon', '10 kg / pohon'];
         semprotFert = ['Fungisida Mankozeb', 'Insek Imidakloprid'];
@@ -425,24 +435,29 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
         semprotDosis = ['2 gr/L', 'Sesuai Kemasan'];
       }
 
-      const date = addDays(start, w * 7);
+      const date = addDays(start, (w - 1) * 7 + 2);
       schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Tabur', fertilizers: taburFert, dosages: taburDosis, isCompleted: false });
       
-      const semprotDate = addDays(start, w * 7 + 3);
+      const semprotDate = addDays(start, (w - 1) * 7 + 6);
       schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
     }
     return schedules;
   }
 
   if (cat === 'Buah Naga') {
-    // Generate schedule roughly every 4 weeks up to 48 weeks
-    for (let w = 4; w <= 48; w += 4) {
+    // Generate schedule every 4 weeks
+    for (let w = 1; w <= 48; w += 4) {
       let taburFert: string[] = [];
       let taburDosis: string[] = [];
       let semprotFert: string[] = [];
       let semprotDosis: string[] = [];
 
-      if (w <= 16) {
+      if (w === 1) {
+        taburFert = ['Pupuk Dasar Kohe Fermentasi', 'Dolomit'];
+        taburDosis = ['5 kg / tiang', '200 gr / tiang'];
+        semprotFert = ['Asam Humat', 'Fungisida Tembaga Oksida'];
+        semprotDosis = ['1 gr/L', '1 gr/L'];
+      } else if (w <= 16) {
         taburFert = ['YaraMila 16-16-16', 'Pupuk Kandang (Fermentasi)'];
         taburDosis = ['100 gr / tiang', '5 kg / tiang'];
         semprotFert = ['Meroke Provit Hijau', 'Fungisida Mankozeb'];
@@ -459,10 +474,10 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
         semprotDosis = ['2 ml/L', 'Sesuai Kemasan'];
       }
 
-      const date = addDays(start, w * 7);
+      const date = addDays(start, (w - 1) * 7 + 3);
       schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Tabur', fertilizers: taburFert, dosages: taburDosis, isCompleted: false });
       
-      const semprotDate = addDays(start, w * 7 + 3);
+      const semprotDate = addDays(start, (w - 1) * 7 + 7);
       schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
     }
     return schedules;
@@ -519,10 +534,10 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
         semprotDosis = ['Sesuai Kemasan'];
       }
 
-      const date = addDays(start, w * 7);
+      const date = addDays(start, (w - 1) * 7 + 2);
       schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Tabur', fertilizers: taburFert, dosages: taburDosis, isCompleted: false });
       
-      const semprotDate = addDays(start, w * 7 + 3);
+      const semprotDate = addDays(start, (w - 1) * 7 + 5);
       schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
     }
     return schedules;
@@ -548,10 +563,10 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
         semprotDosis = ['2 ml/L', '2 gr/L'];
       }
 
-      const date = addDays(start, w * 7);
+      const date = addDays(start, (w - 1) * 7 + 2);
       schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Kocor', fertilizers: kocorFert, dosages: kocorDosis, isCompleted: false });
       
-      const semprotDate = addDays(start, w * 7 + 3);
+      const semprotDate = addDays(start, (w - 1) * 7 + 5);
       schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
     }
     return schedules;
@@ -559,13 +574,18 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
 
   if (cat === 'Umbi') {
     // Approx 12-16 weeks. We generate every 2 weeks.
-    for (let w = 2; w <= 16; w += 2) {
+    for (let w = 1; w <= 16; w += 2) {
       let baseFert: string[] = [];
       let baseDosis: string[] = [];
       let semprotFert: string[] = [];
       let semprotDosis: string[] = [];
 
-      if (w <= 4) {
+      if (w === 1) {
+        baseFert = ['Pupuk Dasar Kohe Matang', 'SP-36', 'Dolomit'];
+        baseDosis = ['1 ton/Ha', '50 gr/bedeng', '100 gr/bedeng'];
+        semprotFert = ['Asam Humat', 'Insek Imidakloprid'];
+        semprotDosis = ['1 gr/L', '0.5 ml/L'];
+      } else if (w <= 4) {
         baseFert = ['YaraMila 16-16-16', 'ZA (Amonium Sulfat)'];
         baseDosis = ['20 gr/tangki', '10 gr/tangki'];
         semprotFert = ['Fungisida Mankozeb', 'Insek Imidakloprid'];
@@ -582,10 +602,10 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
         semprotDosis = ['2 gr/L', '1 ml/L'];
       }
 
-      const date = addDays(start, w * 7);
+      const date = addDays(start, (w - 1) * 7 + 3);
       schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Kocor', fertilizers: baseFert, dosages: baseDosis, isCompleted: false });
       
-      const semprotDate = addDays(start, w * 7 + 3);
+      const semprotDate = addDays(start, (w - 1) * 7 + 6);
       schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
     }
     return schedules;
@@ -593,13 +613,18 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
 
   if (cat === 'Legum') {
     // Short lifecycle 10-12 weeks. Generate every 2 weeks.
-    for (let w = 2; w <= 12; w += 2) {
+    for (let w = 1; w <= 12; w += 2) {
       let baseFert: string[] = [];
       let baseDosis: string[] = [];
       let semprotFert: string[] = [];
       let semprotDosis: string[] = [];
 
-      if (w <= 4) {
+      if (w === 1) {
+        baseFert = ['Pupuk Dasar Kompos', 'Dolomit'];
+        baseDosis = ['Sesuai lubang tanam', '1 sdm/lubang'];
+        semprotFert = ['ZPT Auksin (Rangsang Akar)', 'Asam Humat'];
+        semprotDosis = ['Sesuai Kemasan', '1 gr/L'];
+      } else if (w <= 4) {
         baseFert = ['SP-36', 'YaraMila 16-16-16']; // High P for root nodules
         baseDosis = ['20 gr/tangki', '10 gr/tangki'];
         semprotFert = ['Pupuk Mikro (Molybdenum/Mo)', 'Insek Imidakloprid'];
@@ -616,10 +641,10 @@ export function generateScheduleForPlant(plant: Plant): ScheduleEntry[] {
         semprotDosis = ['2 gr/L'];
       }
 
-      const date = addDays(start, w * 7);
+      const date = addDays(start, (w - 1) * 7 + 4);
       schedules.push({ id: generateId(), plantId: plant.id, date: date.toISOString(), weekNumber: w, type: 'Kocor', fertilizers: baseFert, dosages: baseDosis, isCompleted: false });
       
-      const semprotDate = addDays(start, w * 7 + 3);
+      const semprotDate = addDays(start, (w - 1) * 7 + 7);
       schedules.push({ id: generateId(), plantId: plant.id, date: semprotDate.toISOString(), weekNumber: w, type: 'Semprot', fertilizers: semprotFert, dosages: semprotDosis, isCompleted: false });
     }
     return schedules;
