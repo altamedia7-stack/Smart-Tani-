@@ -24,8 +24,18 @@ const FarmContext = createContext<FarmContextType | undefined>(undefined);
 
 export function FarmProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<FarmState>(() => {
-    const saved = localStorage.getItem('farmState');
-    if (saved) return JSON.parse(saved);
+    try {
+      const saved = localStorage.getItem('farmState');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Basic validation: ensure plants, schedules and history are arrays
+        if (Array.isArray(parsed.plants) && Array.isArray(parsed.schedules) && Array.isArray(parsed.history)) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.error("Gagal memuat data dari memori browser:", e);
+    }
     return { plants: [], schedules: [], history: [], activePlantId: null };
   });
 
