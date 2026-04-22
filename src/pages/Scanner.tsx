@@ -31,11 +31,11 @@ export default function Scanner() {
   };
 
   const handleAnalyze = async () => {
-    if (!activePlantId) return alert("Pilih tanaman dulu");
+    const activePlant = plants.find(p => p.id === activePlantId);
+    if (!activePlant) return alert("Pilih tanaman di Dashboard terlebih dahulu atau buat lahan baru.");
     if (!symptoms.trim() && !image) return alert("Masukkan foto atau gejala minimal!");
     
-    const activePlant = plants.find(p => p.id === activePlantId);
-    const currentSoilType = activePlant?.soilType || '';
+    const currentSoilType = activePlant.soilType || '';
 
     setLoading(true);
     try {
@@ -44,16 +44,19 @@ export default function Scanner() {
       
       let res;
       try {
-        res = await analyzePlantAI(image, sympList, condList, historyInfo, currentSoilType, activePlant?.name);
+        console.log("Analyzing for plant:", activePlant.name);
+        res = await analyzePlantAI(image, sympList, condList, historyInfo, currentSoilType, activePlant.name);
       } catch (e) {
         console.warn("AI failed, falling back to rule engine", e);
         res = analyzeWithRuleEngine(sympList, condList);
       }
       
+      if (!res) throw new Error("Gagal mendapatkan hasil analisa");
+
       setResult(res);
       addHistory({
         id: Math.random().toString(36).substr(2, 9),
-        plantId: activePlantId,
+        plantId: activePlant.id,
         date: new Date().toISOString(),
         imageUrl: image,
         symptoms: sympList,
@@ -62,24 +65,26 @@ export default function Scanner() {
       });
 
       // Update plant status based on severity
-      if (res.severity === 'Berat') updatePlantStatus(activePlantId, 'Sakit');
-      else if (res.severity === 'Sedang') updatePlantStatus(activePlantId, 'Warning');
+      if (res.severity === 'Berat') updatePlantStatus(activePlant.id, 'Sakit');
+      else if (res.severity === 'Sedang') updatePlantStatus(activePlant.id, 'Warning');
       
-      // We could recalculate schedules to include the new recommendations
-      // recalculateSchedule(activePlantId);
-
     } catch (error) {
       console.error(error);
-      alert("Gagal melakukan analisa");
+      alert("Maaf, terjadi kesalahan saat menganalisis. Pastikan koneksi internet aktif.");
     } finally {
       setLoading(false);
     }
   };
 
+  const activePlant = plants.find(p => p.id === activePlantId);
+
   if (result) {
     return (
       <div className="p-4 space-y-6 pb-24">
-        <h2 className="text-3xl font-black text-emerald-900 tracking-tight">Hasil Analisis</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-3xl font-black text-emerald-900 tracking-tight">Hasil Analisis</h2>
+          {activePlant && <Badge variant="outline" className="border-emerald-200 text-emerald-700">{activePlant.name}</Badge>}
+        </div>
         <div className="bg-emerald-900 rounded-[32px] p-6 shadow-xl text-white relative overflow-hidden">
           <h3 className="text-xl font-black mb-4 flex items-center space-x-2">
             <span className="bg-emerald-800 p-2 rounded-lg">🤖</span>
@@ -115,7 +120,14 @@ export default function Scanner() {
                   <div className="mt-2 pt-2 border-t border-emerald-50 space-y-1.5 flex flex-col">
                     {rec.kandunganNPK && (
                       <div className="text-[11px] text-emerald-800 bg-emerald-50/50 p-1.5 rounded-lg border border-emerald-100/50">
-                        <span className="font-black uppercase tracking-wider text-emerald-600 target-label">{rec.jenis.toLowerCase().includes('insek') || rec.jenis.toLowerCase().includes('fungi') || rec.jenis.toLowerCase().includes('pestisida') || rec.kandunganNPK.toLowerCase().includes('bahan aktif') ? 'Bahan Aktif:' : 'Hara:'}</span> {rec.kandunganNPK}
+                        <span className="font-black uppercase tracking-wider text-emerald-600 target-label">
+                          {(rec.jenis?.toLowerCase().includes('insek') || 
+                            rec.jenis?.toLowerCase().includes('fungi') || 
+                            rec.jenis?.toLowerCase().includes('pestisida') || 
+                            rec.kandunganNPK?.toLowerCase().includes('bahan aktif')) 
+                            ? 'Bahan Aktif:' 
+                            : 'Hara:'}
+                        </span> {rec.kandunganNPK}
                       </div>
                     )}
                     {rec.expectedOutcome && (
